@@ -1,39 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_free_factory.c                                  :+:      :+:    :+:   */
+/*   ft_malloc_factory.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gcollett <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/07/10 02:47:41 by gcollett          #+#    #+#             */
-/*   Updated: 2017/07/10 02:50:47 by gcollett         ###   ########.fr       */
+/*   Created: 2017/07/14 15:11:27 by gcollett          #+#    #+#             */
+/*   Updated: 2017/07/14 15:11:29 by gcollett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <stdarg.h>
-#include "libft.h"
+#include <stdlib.h>
+#include <stdio.h>
 
-void 	ft_free_factory(int nb, ...)
+void ft_malloc_factory(int nb, ...)
 {
-	va_list lst;
-	int i;
+  va_list lst;
+  int index;
+  int taille;
+  char **s;
 
-	va_start(lst, nb);
-	i = 0;
-	while(i < nb)
-	{
-		ft_memdel(va_arg(lst, void **));
-		i++;
-	}
-	va_end(lst);
-}
-
-void	ft_free_char(char *s1, char *s2, char *s3, char *s4)
-{
-	free(s1);
-	free(s2);
-	free(s3);
-	free(s4);
+  index = 0;
+  va_start(lst, nb);
+  while(index < nb)
+  {
+      taille = va_arg(lst, int);
+      s = va_arg(lst, char **);
+      if (!(s = malloc(taille)))
+      {
+        va_end(lst);
+        exit(0);
+      }
+      index++;
+  }
+  va_end(lst);
 }
