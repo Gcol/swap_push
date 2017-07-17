@@ -119,5 +119,6 @@ int				ft_c_in_str(char car, char *string);
 char			*ull_base(long long n, int base, int negatif, int uppercase);
 void			ft_malloc_factory(int nb, ...);
 void			ft_free_factory(int nb, ...);
+void			*ft_memalloc_exit(size_t size);
 
 #endif
