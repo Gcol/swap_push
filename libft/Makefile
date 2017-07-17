@@ -77,6 +77,7 @@ SRC		=	ft_memset.c				\
 			ft_c_in_str.c				\
 			ft_free_factory.c		\
 			ft_malloc_factory.c	\
+			ft_memalloc_exit.c	\
 
 OBJS	=	$(SRC:.c=.o)
 
