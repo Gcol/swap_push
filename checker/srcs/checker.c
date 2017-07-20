@@ -14,8 +14,42 @@
 #include <libft.h>
 #include <fcntl.h>
 
-void	execute_instruction(int *****tab, int choice, int target, int coord)
+void	ft_print_tab(int *tab, int taille)
 {
+	int i;
+
+	i = 0;
+	while(i < taille)
+	{
+		printf("%d | ", tab[i]);
+		i++;
+	}
+	printf("\n");
+}
+
+void	execute_instruction(int ***tab, int choice, int coord)
+{
+	int target;
+	int save;
+	int tmp;
+	int i;
+
+	printf("choice = %d |  coord = %d \n", choice, coord);
+	i = 1;
+	if (choice > 1 && (choice = 1))
+		execute_instruction(tab, 0, coord);
+	printf("res choice = %d\n",choice);
+	target = tab[choice][0][0];
+	while(i < tab[choice][1][0] && i != coord)
+	{
+		printf("%d <- %d | taille = %d \n", 	tab[choice][0][i], tab[choice][0][i - 1], tab[0][1][0]);
+		tmp = tab[choice][0][i];
+		tab[choice][0][i] = target;
+		tab[choice][0][i - 1] = tmp;
+		printf("%d <- %d\n", 	tab[choice][0][i], tab[choice][0][i - 1]);
+		i = (coord != 0) ? i + 1 : i - 1;
+	}
+	ft_print_tab(tab[choice][0], tab[choice][1][0]);
 }
 
 int **parsing_to_int(char **format, int taille)
@@ -32,6 +66,7 @@ int **parsing_to_int(char **format, int taille)
 		result[0][index] = ft_atoi(format[index]);
 		index++;
 	}
+	printf("taille = %d\n", taille);
 	result[1][0] = taille;
 	return(result);
 }
@@ -62,43 +97,32 @@ int int_check_rep(int	*src, int len)
 	return (diff);
 }
 
-int	launch_instruction(char *str, int ****tab)
+int	launch_instruction(char *str, int ***tab)
 {
 	int len;
 	int choice;
 
 	choice = 4;
 	len = ft_strlen(str);
+	printf("str = %s | taille = %d\n", str, tab[0][1][0]);
 	if (len == 2 || len == 3)
 	{
 		if (str[0] == str[1] && str[1] == str[len -1] && ft_c_in_str(str[0], "rps"))
 			choice = 3;
 		if (str[len - 1] == 'a' || str[len - 1] == 'b')
-			choice = str[1] - 'a';
+			choice = str[len - 1] - 'a';
 		if (str[0] == 's')
-			execute_instruction(&tab, choice, *tab[choice][0][0], 1);
+			execute_instruction(tab, choice, 2);
 		if (str[0] == 'p')
-				execute_instruction(&tab, choice, *tab[choice][0][0], 2);
+				execute_instruction(tab, choice, -1);
 		if (str[0] == 'r' && len == 2)
-			execute_instruction(&tab, choice, *tab[choice][0][0], -1);
+			execute_instruction(tab, choice, tab[choice][1][0]);
 		if (str[0] == 'r' && len == 3)
-			execute_instruction(&tab, choice, *tab[choice][0][*tab[choice][1][0]], 0);
+			execute_instruction(tab, choice , 0);
 	}
 	return (choice);
 }
-/*
-void	ft_print_tab(int *tab, int taille)
-{
-	printf("%d\n", tab[0]);
-	int i;
 
-	i = 0;
-	while(tab[i])
-	{
-		printf("%d | ", tab[i]);
-		i++;
-	}
-}*/
 
 int str_is_valid(char **format, char *str, char first_carac)
 {
@@ -141,15 +165,19 @@ int main(int argc, char **argv)
 			if (!int_check_rep(*tab[0], argc - 1))
 				error = 1;
 			tab[1] = ft_memalloc_exit(sizeof(int *) * 2);
-			tab[1][2] = ft_memalloc_exit(1);
-			while(get_next_line(fd, &str) && error == 0)
+			tab[1][0] = ft_memalloc_exit(1);
+			tab[1][1] = ft_memalloc_exit(1);
+			printf("taille = %d\n", tab[0][1][0]);
+			while(error == 0 && get_next_line(0, &str))
 			{
-				if (launch_instruction(str, &tab) == 4)
+				if (launch_instruction(str, tab) == 4)
 					error = 1;
 				free(str);
 			}
 		}
 	}
+	printf("taille = %d\n",  tab[0][1][0]);
+	ft_print_tab(tab[0][0], tab[0][1][0]);
 	if (error != 0)
 		write(1, "Error\n", 7);
 	return (1);
