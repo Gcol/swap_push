@@ -1,104 +1,142 @@
-NAME	=	libft.a
+## Name of Project
 
-SRC		=	ft_memset.c				\
-			ft_bzero.c					\
-			ft_memcpy.c					\
-			ft_memccpy.c				\
-			ft_memmove.c				\
-			ft_memchr.c					\
-			ft_memcmp.c					\
-			ft_strlen.c					\
-			ft_strdup.c					\
-			ft_strcpy.c					\
-			ft_strncpy.c				\
-			ft_strcat.c					\
-			ft_strncat.c				\
-			ft_strlcat.c				\
-			ft_strchr.c					\
-			ft_strrchr.c				\
-			ft_strstr.c					\
-			ft_strnstr.c				\
-			ft_strcmp.c					\
-			ft_strncmp.c				\
-			ft_atoi.c						\
-			ft_isalpha.c				\
-			ft_isdigit.c				\
-			ft_isalnum.c				\
-			ft_isascii.c				\
-			ft_isprint.c				\
-			ft_toupper.c				\
-			ft_tolower.c				\
-			ft_memalloc.c				\
-			ft_memdel.c					\
-			ft_strnew.c					\
-			ft_strdel.c					\
-			ft_strclr.c					\
-			ft_striter.c				\
-			ft_striteri.c				\
-			ft_strmap.c					\
-			ft_strmapi.c				\
-			ft_strequ.c					\
-			ft_strnequ.c				\
-			ft_strsub.c					\
-			ft_strjoin.c				\
-			ft_strtrim.c				\
-			ft_strsplit.c				\
-			ft_itoa.c						\
-			ft_putchar.c				\
-			ft_putstr.c					\
-			ft_putendl.c				\
-			ft_putnbr.c					\
-			ft_putchar_fd.c			\
-			ft_putstr_fd.c			\
-			ft_putendl_fd.c			\
-			ft_putnbr_fd.c			\
-			ft_lstnew.c					\
-			ft_lstdelone.c			\
-			ft_lstdel.c					\
-			ft_lstadd.c					\
-			ft_lstiter.c				\
-			ft_lstmap.c					\
-			ft_lst_size.c				\
-			ft_lst_clear.c			\
-			ft_realloc.c				\
-			ft_swap.c						\
-			ft_lst_push_back.c	\
-			ft_lst_push_front.c	\
-			ft_strndup.c				\
-			ft_strlendup.c			\
-			get_next_line.c			\
-			ft_itoa_base.c			\
-			ft_ulltoa_base.c		\
-			ft_stradd.c					\
-			ft_stradd_in.c			\
-			ft_parse_str.c			\
-			ft_putunicode.c			\
-			ft_atoi_base.c			\
-			ft_c_in_str.c				\
-			ft_free_factory.c		\
-			ft_malloc_factory.c	\
-			ft_memalloc_exit.c	\
+NAME = libft.a
 
-OBJS	=	$(SRC:.c=.o)
+## Color for compilating (pink)
 
-RM		=	rm -rf
+COLOR = \0033[1;35m
 
-all		: $(NAME)
+## List of Directories
 
-$(NAME)	:
-		@gcc -c -Wall -Wextra -Werror $(SRC) -I ./
-		@echo "\t\033[33;32m'MAKE' ->\t\033[1;34m$(NAME)\033[0m :\tLibrary compilation in progress..."
-		@ar rc $(NAME) $(OBJS)
-		@ranlib $(NAME)
-		@echo "\t\033[33;32m'MAKE' ->\t\033[1;34m$(NAME)\033[0m :\tLibrary compilation completed sucessfully !"
+INC_DIR = includes
+OBJ_DIR = objs
+SRC_DIR = srcs
 
-clean 	:
-		@echo "\t\033[1;31m'CLEAN' ->\tDestruction\033[0m:\tfiles .o for the library \033[1;34m$(NAME)\033[0m"
-		@$(RM) $(OBJS)
-		@echo "\t\033[1;31m'CLEAN' ->\tDestruction\033[0m:\tfiles .o for the library \033[1;34m$(NAME)\033[0m completed successfully !"
+## Compilating Utilities
 
-fclean	:	clean
-		@$(RM) $(NAME)
-		@echo "\t\033[1;31m'FCLEAN' ->\tDestruction\033[0m of library \033[1;34m$(NAME)\033[0m completed successfully !"
+FLAGS = -Wall -Wextra -Werror -Ofast
 
-re		:	fclean all
+INC = $(INC_DIR:%=-I ./%)
+CC = clang $(FLAGS) $(INC)
+
+## List of Functions
+
+SRC_FT =	ft_atoi 					\
+					ft_isdigit				\
+					ft_lstdel					\
+					ft_memchr					\
+					ft_putendl				\
+					ft_stradd_in			\
+					ft_striter				\
+					ft_strncmp				\
+					ft_strsub					\
+					ft_atoi_base			\
+					ft_isprint				\
+					ft_lstdelone			\
+					ft_memcmp					\
+					ft_putendl_fd			\
+					ft_strcat					\
+					ft_striteri				\
+					ft_strncpy				\
+					ft_strtrim				\
+					ft_atoll					\
+					ft_itoa						\
+					ft_lstiter				\
+					ft_memcpy					\
+					ft_putnbr					\
+					ft_strchr					\
+					ft_strjoin				\
+					ft_strndup				\
+					ft_swap						\
+					ft_bzero					\
+					ft_itoa_base			\
+					ft_lstmap					\
+					ft_memdel					\
+					ft_putnbr_fd			\
+					ft_strclr					\
+					ft_strlcat				\
+					ft_strnequ				\
+					ft_tolower				\
+					ft_c_in_str				\
+					ft_lst_clear			\
+					ft_lstnew					\
+					ft_memmove				\
+					ft_putstr					\
+					ft_strcmp					\
+					ft_strlen					\
+					ft_strnew					\
+					ft_toupper				\
+					ft_free_factory		\
+					ft_lst_push_back	\
+					ft_malloc_factory	\
+					ft_memset					\
+					ft_putstr_fd			\
+					ft_strcpy					\
+					ft_strlendup			\
+					ft_strnstr				\
+					ft_ulltoa_base		\
+					ft_isalnum				\
+					ft_lst_push_front	\
+					ft_memalloc				\
+					ft_parse_str			\
+					ft_putunicode			\
+					ft_strdel					\
+					ft_strmap					\
+					ft_strrchr				\
+					get_next_line			\
+					ft_isalpha				\
+					ft_lst_size				\
+					ft_memalloc_exit	\
+					ft_putchar				\
+					ft_realloc				\
+					ft_strdup					\
+					ft_strmapi				\
+					ft_strsplit				\
+					ft_isascii				\
+					ft_lstadd					\
+					ft_memccpy				\
+					ft_putchar_fd			\
+					ft_stradd					\
+					ft_strequ					\
+					ft_strncat				\
+					ft_strstr					\
+
+
+## List of Utilities
+
+OBJ = $(SRC_FT:%=$(OBJ_DIR)/%.o)
+SRC = $(SRC_FT:%=$(SRC_DIR)/%.c)
+
+## Rules of Makefile
+
+all: $(NAME)
+	@echo "$(COLOR)$(NAME)\t\t\0033[1;30m[All OK]\0033[0;37m"
+
+$(OBJ_DIR):
+	@mkdir -p $@
+	@echo "$(COLOR)Creating    : \0033[0;32m$@\0033[0;37m"
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(INC_DIR)/libft.h
+	@$(CC) -c $< -o $@
+	@echo "$(COLOR)Compilating : \0033[0;32m$(@:$(OBJ_DIR)/%=%)\0033[0;37m"
+
+$(NAME): $(OBJ_DIR) $(SRC) $(INC_DIR)/libft.h
+	@$(MAKE) -j -s $(OBJ)
+	@echo "$(COLOR)Objects\t\t\0033[0;32m[Created]\0033[0;37m"
+	@ar rc $(NAME) $(OBJ)
+	@ranlib $(NAME)
+
+clean:
+	@rm -rf $(OBJ_DIR)
+	@echo "$(COLOR)Objects\t\t\0033[0;31m[Deleted]\0033[0;37m"
+
+fclean: clean
+	@rm -f $(NAME)
+	@echo "$(COLOR)$(NAME)\t\t\0033[0;31m[Deleted]\0033[0;37m"
+
+re: fclean all
+
+norme:
+	@norminette $(SRC) $(INC_DIR)/
+
+.PHONY: all clean fclean re norme

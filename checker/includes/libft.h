@@ -120,5 +120,6 @@ char			*ull_base(long long n, int base, int negatif, int uppercase);
 void			ft_malloc_factory(int nb, ...);
 void			ft_free_factory(int nb, ...);
 void			*ft_memalloc_exit(size_t size);
+long			ft_atoll(char *nb);
 
 #endif
