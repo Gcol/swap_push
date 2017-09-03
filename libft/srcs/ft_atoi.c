@@ -22,7 +22,7 @@ static char		ft_atoi2(char nb)
 		return ('a');
 }
 
-long				ft_atoi(char *nb)
+int				ft_atoi(const char *nb)
 {
 	int		a;
 	char	c;

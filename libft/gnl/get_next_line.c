@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <libft.h>
+#include "get_next_line.h"
+# include "libft/includes/libft.h"
 #include <stdio.h>
 
 t_memory		*free_factory(t_memory *save)
