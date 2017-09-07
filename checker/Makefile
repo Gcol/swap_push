@@ -23,7 +23,8 @@ CC = clang $(FLAGS) $(INC)
 ## List of Functions
 
 SRC_FT =	 checker \
-		 			instruction
+		 			instruction \
+					parser_swap	\
 
 ## List of Utilities
 

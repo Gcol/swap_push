@@ -1,6 +1,6 @@
 ## Name of Project
 
-NAME = checker
+NAME = push_swap
 
 ## Color for compilating (pink)
 
@@ -22,8 +22,8 @@ CC = clang $(FLAGS) $(INC)
 
 ## List of Functions
 
-SRC_FT =	 checker \
-		 			instruction
+SRC_FT =	push_swap		\
+					parser_swap	\
 
 ## List of Utilities
 
@@ -39,11 +39,11 @@ $(OBJ_DIR):
 	@mkdir -p $@
 	@echo "$(COLOR)Creating    : \0033[0;32m$@\0033[0;37m"
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(INC_DIR)/checker.h
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(INC_DIR)/push_swap.h
 	@$(CC) -c $< -o $@
 	@echo "$(COLOR)Compilating : \0033[0;32m$(@:$(OBJ_DIR)/%=%)\0033[0;37m"
 
-$(NAME): $(OBJ_DIR) $(SRC) $(INC_DIR)/checker.h
+$(NAME): $(OBJ_DIR) $(SRC) $(INC_DIR)/push_swap.h
 	@$(MAKE) -j -s $(OBJ)
 	@echo "$(COLOR)Objects\t\t\0033[0;32m[Created]\0033[0;37m"
 	@make -j -s -C $(LIB_DIR)
