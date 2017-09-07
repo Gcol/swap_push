@@ -1,7 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   instruction.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gcollett <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/09/07 14:58:37 by gcollett          #+#    #+#             */
+/*   Updated: 2017/09/07 15:00:38 by gcollett         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include <libft.h>
 
-void double_rotate(long ***tab, int choice)
+void	double_rotate(long ***tab, int choice)
 {
 	long target;
 	long tmp;
@@ -11,15 +22,15 @@ void double_rotate(long ***tab, int choice)
 		double_rotate(tab, 0);
 	if (tab[choice][1][0])
 	{
-			i = tab[choice][1][0] - 1;
-			target = tab[choice][0][tab[choice][1][0] - 1];
-			while(--i >= 0)
-			{
-				tmp = tab[choice][0][i];
-				tab[choice][0][i] = target;
-				tab[choice][0][i + 1] = tmp;
-			}
+		i = tab[choice][1][0] - 1;
+		target = tab[choice][0][tab[choice][1][0] - 1];
+		while (--i >= 0)
+		{
+			tmp = tab[choice][0][i];
+			tab[choice][0][i] = target;
+			tab[choice][0][i + 1] = tmp;
 		}
+	}
 }
 
 void	execute_instruction(long ***tab, int choice, long coord)
@@ -30,11 +41,11 @@ void	execute_instruction(long ***tab, int choice, long coord)
 
 	if (choice > 1 && (choice = 1))
 		execute_instruction(tab, 0, coord);
-	i =  1;
+	i = 1;
 	if (coord == 1)
 		coord = tab[choice][1][0];
 	target = tab[choice][0][0];
-	while(i < tab[choice][1][0] && i != coord)
+	while (i < tab[choice][1][0] && i != coord)
 	{
 		tmp = tab[choice][0][i];
 		tab[choice][0][i] = target;
@@ -43,7 +54,7 @@ void	execute_instruction(long ***tab, int choice, long coord)
 	}
 }
 
-void push_instruction(long ***tab, int choice)
+void	push_instruction(long ***tab, int choice)
 {
 	long	*tmp;
 	long	i;
@@ -52,7 +63,7 @@ void push_instruction(long ***tab, int choice)
 	if (tab[-choice + 1][1][0])
 	{
 		tmp = ft_memalloc_exit(((tab[choice][1][0]) + 1) * sizeof(long));
-		while(++i < tab[choice][1][0] + 1)
+		while (++i < tab[choice][1][0] + 1)
 			tmp[i] = tab[choice][0][i - 1];
 		tmp[0] = tab[-choice + 1][0][0];
 		free(tab[choice][0]);
@@ -60,7 +71,7 @@ void push_instruction(long ***tab, int choice)
 		tab[choice][1][0] += 1;
 		i = 0;
 		tmp = ft_memalloc_exit((tab[-choice + 1][1][0] - 1) * sizeof(long));
-		while(++i < tab[-choice + 1][1][0])
+		while (++i < tab[-choice + 1][1][0])
 			tmp[i - 1] = tab[-choice + 1][0][i];
 		free(tab[-choice + 1][0]);
 		tab[-choice + 1][0] = tmp;
@@ -68,16 +79,17 @@ void push_instruction(long ***tab, int choice)
 	}
 }
 
-int	launch_instruction(char *str, long ***tab)
+int		launch_instruction(char *str, long ***tab)
 {
-	long len;
-	int choice;
+	long	len;
+	int		choice;
 
 	choice = 4;
 	len = ft_strlen(str);
 	if (len == 2 || len == 3)
 	{
-		if (str[0] == str[1] && str[1] == str[len -1] && ft_c_in_str(str[0], "rps"))
+		if (str[0] == str[1] && str[1] == str[len - 1] &&
+			ft_c_in_str(str[0], "rps"))
 			choice = 3;
 		if (str[len - 1] == 'a' || str[len - 1] == 'b')
 			choice = str[len - 1] - 'a';
