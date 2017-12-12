@@ -1,6 +1,65 @@
 #include <push_swap.h>
 #include "libft.h"
 
+#include <stdio.h>
+
+void affiche_stack(t_pushswap *tab, int choix)
+{
+  t_dlist *tmp;
+
+	if (choix == 1 || choix == 3)
+	{
+    tmp = tab->stack_A;
+		write(1, "Pile A : \n", 10);
+		while(tmp)
+		{
+			printf("%ld\n", tmp->dta);
+			tmp = (tmp->next == tab->stack_A) ? NULL : tmp->next;
+		}
+	}
+	if (choix == 2 || choix == 3)
+	{
+    tmp = tab->stack_B;
+		write(1, "Pile B : \n", 10);
+		while(tmp)
+		{
+			printf("%ld\n", tmp->dta);
+			tmp = (tmp->next == tab->stack_B) ? NULL : tmp->next;
+		}
+	}
+}
+
+void  execute_instruction(t_pushswap *tab, int choice, int inst, char *registre)
+{
+  t_dlist **target;
+	int tmp;
+
+	tab->registre = ft_stradd(tab->registre, registre, 0, 1);
+  if (choice == 3 && !(choice = 0))
+    execute_instruction(tab, 1, inst, 0);
+  if (choice == 0)
+    target = &(tab->stack_A);
+  if (choice == 1)
+    target = &(tab->stack_B);
+  if (inst == PUSH)
+  {
+    if ((choice == 0) ? tab->stack_B : tab->stack_A)
+    {
+      ft_dlist_add(target, 0, ((choice == 0) ? tab->stack_B : tab->stack_A)->dta);
+      ft_dlist_remove(((choice == 0) ? &tab->stack_B : &tab->stack_A), 0);
+    }
+  }
+  else if (inst == D_ROTATE && (*target) && (*target)->prev)
+    (*target) = (*target)->prev;
+  else if (inst == ROTATE && (*target) && (*target)->next)
+      (*target) = (*target)->next;
+  else if (inst == SWITCH && (*target) && (*target)->next)
+  {
+    tmp = (*target)->dta;
+    (*target)->dta  = (*target)->next->dta;
+    (*target)->next->dta = tmp;
+  }
+}
 
 t_dlist  *add_stack(char *str, t_dlist *stack, int test,t_dlist *res)
 {
@@ -47,7 +106,7 @@ int  verif_pile(t_pushswap *tab, int size, char sens)
       sens = 2;
     tmp = tmp->next;
   }
-  if (sens == 2)
+  if (sens != 2)
     return(1);
   else
     return(0);
@@ -83,82 +142,6 @@ void get_argc_to_tab(t_pushswap *tab, int nb_arg, char **arg, int state)
   tab->stack_A->prev = tmp;
 }
 
-/*
-static int		issorted(t_pile *pile, int until, int apile)
-{
-	return (ksorted(pile, apile) >= until);
-}
-
-
-void			sort3(t_pile **p1, t_pile **p2, int until, int apile)
-{
-	int		a;
-	int		b;
-	int		c;
-
-	a = (apile) ? (*p1)->n : (*p2)->next->n;
-	b = (apile) ? (*p1)->next->n : (*p2)->n;
-	if (until == 3 && !issorted((apile) ? *p1 : *p2, 3, apile))
-	{
-		a = (apile) ? (*p1)->n : (*p2)->next->next->n;
-		b = (apile) ? (*p1)->next->n : (*p2)->next->n;
-		c = (apile) ? (*p1)->next->next->n : (*p2)->n;
-		if ((apile && a < b && b > c) || (!apile && a > b && b < c))
-		{
-			doinstruct((apile) ? RA : RB, p1, p2);
-			doinstruct((apile) ? SA : SB, p1, p2);
-			doinstruct((apile) ? RRA : RRB, p1, p2);
-		}
-		else
-			doinstruct((apile) ? SA : SB, p1, p2);
-		sort3(p1, p2, until, apile);
-	}
-	else if (until == 2 && a > b)
-		doinstruct((apile) ? SA : SB, p1, p2);
-}
-
-int				act(t_pile **p1, t_pile **p2, int apile, int pivot)
-{
-	if ((apile && (*p1)->n < pivot) || (!apile && (*p2)->n >= pivot))
-	{
-		doinstruct((apile) ? PB : PA, p1, p2);
-		return (1);
-	}
-	else
-		doinstruct((apile) ? RA : RB, p1, p2);
-	return (0);
-}
-
-void			quicksort(t_piles p, int until, int apile, int fiter)
-{
-	int		i;
-	int		reset;
-	int		pivot;
-
-	i = 0;
-	reset = 0;
-	pivot = median((apile) ? *(p.p1) : *(p.p2), until);
-	if (issorted((apile) ? *(p.p1) : *(p.p2), until, apile))
-		return ;
-	while (until > 3 && i < (until / 2) + (until % 2 && !apile) && ++reset)
-		i += act(p.p1, p.p2, apile, pivot);
-	while ((!fiter || !apile) && (reset--) - i)
-		doinstruct((apile) ? RRA : RRB, p.p1, p.p2);
-	if (until - i <= 3)
-		sort3(p.p1, p.p2, until - i, apile);
-	else
-		quicksort(p, until - i, apile, fiter);
-	if (i)
-		quicksort(p, i, !apile, apile && fiter);
-	while (i--)
-		doinstruct(apile ? PA : PB, p.p1, p.p2);
-
-}*/
-
-
-
-#include <stdio.h>
-
 int median(t_dlist *stack, int size, int bigger, int lower)
 {
   t_dlist *cur;
@@ -166,54 +149,49 @@ int median(t_dlist *stack, int size, int bigger, int lower)
   int cmp;
   int position;
 
-  position = 0;
+  position = 1;
   cur = stack;
   while( position != 0 && position != -1)
   {
       cmp = -1;
       position = 0;
       tmp = stack;
-      if (tmp->dta >= lower && tmp->dta <= bigger)
+      if ((cur->dta >= lower && cur->dta <= bigger) || lower == bigger)
         while(++cmp < size )
         {
-          position += ((cur->dta < tmp->dta) ? 1 : -1);
+					if (cur->dta < tmp->dta)
+						position += 1;
+					else if (cur->dta > tmp->dta)
+						position -=1;
           tmp = tmp->next;
         }
-      if (position > 0)
+      if (position < 0)
         bigger = tmp->dta;
-      else if (position < -1)
+      else if (position > 1)
         lower = tmp->dta;
       cur = cur->next;
   }
-  return(tmp->dta);
+  return(cur->prev->dta);
 }
 
-/*
-
-while (until > 3 && i < (until / 2) + (until % 2 && !apile) && ++reset)
-  i += act(p.p1, p.p2, apile, pivot);
-while ((!fiter || !apile) && (reset--) - i)
-  doinstruct((apile) ? RRA : RRB, p.p1, p.p2);
-if (until - i <= 3)
-  sort3(p.p1, p.p2, until - i, apile);
-else
-  quicksort(p, until - i, apile, fiter);
-if (i)
-  quicksort(p, i, !apile, apile && fiter);
-while (i--)
-  doinstruct(apile ? PA : PB, p.p1, p.p2);
-*/
-
-void  get_instruc(t_pushswap *tab, int target, int size)
+void 	push_to_stack_median(t_pushswap *tab, int pivot)
 {
-  int pivot;
-  int reset;
+	t_dlist *tmp;
 
-  reset = 0;
-  pivot = median(((target) ? tab->stack_B : tab->stack_A), size, 2147483647, -2147483648);
-  if (verif_pile(tab, size, ((target) ? 'D' : 'C')))
+	tmp = NULL;
+	while(tab->stack_A != tmp)
+	{
+		if (tab->stack_A->dta >= pivot)
+			execute_instruction(tab, 1, PUSH, 0);
+	}
+}
+
+void  get_instruc(t_pushswap *tab, int size)
+{
+  if (verif_pile(tab, size, 'C'))
     return ;
-
+	push_to_stack_median(tab, median(tab->stack_A, size, 0, 0));
+	//tri_stack(tab);
 }
 
 int main(int argc, char **argv)
@@ -224,8 +202,8 @@ int main(int argc, char **argv)
   if (argc > 1)
   {
 	   get_argc_to_tab(tab, argc, argv, 0);
-     get_instruc(tab, 0, ft_dlist_len(tab->stack_A));
-    // affiche_stack(tab, 3);
+     get_instruc(tab, ft_dlist_len(tab->stack_A));
+     affiche_stack(tab, 3);
    }
    return(0);
 }

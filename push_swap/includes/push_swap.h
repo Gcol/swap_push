@@ -8,7 +8,7 @@ typedef struct	s_pushswap
 {
   t_dlist *stack_A;
   t_dlist *stack_B;
-  int    nb_registre;
+  char  *registre;
 }				t_pushswap;
 
 
