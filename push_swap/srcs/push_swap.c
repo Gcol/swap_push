@@ -1,5 +1,6 @@
 #include <push_swap.h>
 #include "libft.h"
+#include <limits.h>
 
 #include <stdio.h>
 
@@ -154,11 +155,11 @@ int median(t_dlist *stack, int size, int bigger, int lower)
   cur = stack;
   while( position != 0 && position != -1)
   {
-    printf("bigger = %d lower = %d position = %d cur-Nb = %ld\n", bigger, lower, position, cur->dta);
+    //printf("bigger = %d lower = %d position = %d cur-Nb = %ld\n", bigger, lower, position, cur->dta);
       cmp = -1;
-      position = 0;
       tmp = stack;
-      if ((cur->dta >= lower && cur->dta <= bigger) || lower == bigger)
+      position = 0;
+      //if ((cur->dta >= lower && cur->dta <= bigger) && !(position = 0))
         while(++cmp < size )
         {
 					if (cur->dta < tmp->dta)
@@ -168,9 +169,9 @@ int median(t_dlist *stack, int size, int bigger, int lower)
           tmp = tmp->next;
         }
       if (position < 0)
-        bigger = tmp->dta;
+        bigger = cur->dta;
       else if (position > 1)
-        lower = tmp->dta;
+        lower = cur->dta;
       cur = cur->next;
   }
   return(cur->prev->dta);
@@ -181,24 +182,29 @@ void 	push_to_stack_median(t_pushswap *tab, int pivot)
 	t_dlist *tmp;
 
 	tmp = NULL;
-  printf("pivot = %d\n", pivot);
+  //printf("pivot = %d\n", pivot);
 	while(tab->stack_A != tmp)
 	{
 		if (tab->stack_A->dta >= pivot)
-			execute_instruction(tab, 1, PUSH, 0);
+			execute_instruction(tab, 1, PUSH, "PB\n");
     else if (!tmp)
       tmp = tab->stack_A;
     tab->stack_A = tab->stack_A->next;
 	}
 }
 
+void tri_stack(t_pushswap *tab)
+{
+  if (tab->stack_A)
+    return;
+}
+
 void  get_instruc(t_pushswap *tab, int size)
 {
   if (verif_pile(tab, size, 'C'))
     return ;
-
-	push_to_stack_median(tab, median(tab->stack_A, size, 0, 0));
-	//tri_stack(tab);
+	push_to_stack_median(tab, median(tab->stack_A, size, INT_MAX, INT_MIN));
+  tri_stack(tab);
 }
 
 int main(int argc, char **argv)
@@ -206,6 +212,7 @@ int main(int argc, char **argv)
   t_pushswap *tab;
 
 	tab = ft_memalloc_exit(sizeof(t_pushswap));
+  tab->registre = ft_memalloc_exit(1);
   if (argc > 1)
   {
 	   get_argc_to_tab(tab, argc, argv, 0);
