@@ -124,18 +124,18 @@ void get_argc_to_tab(t_pushswap *tab, int nb_arg, char **arg, int state)
 	index_c = -1;
 	while(state < 3)
 	{
-		if (!arg[index_s][++index_c] && !(index_c = 0))
+		if ((!arg[index_s][++index_c] && !(index_c = 0)) || ft_isspace(arg[index_s][index_c]))
 		{
 			tab->stack_A = add_stack(arg[index_s], tab->stack_A, 0, NULL);
 			index_s += 1;
 			state = (index_s < nb_arg) ? 0 : 3;
 		}
-		if (state == 0 && ft_strchr("+-1234567890",arg[index_s][index_c]))
+		if (state == 0 && ft_strchr("+-",arg[index_s][index_c]))
 			state = 1;
-		else if ((state == 0 && !ft_isspace(arg[index_s][index_c])) ||
-     (state == 1 && !ft_strchr("1234567890",arg[index_s][index_c])))
-         ft_exit(2);
-
+		else if ((!ft_isspace(arg[index_s][index_c]) &&
+    !ft_strchr("1234567890",arg[index_s][index_c])) ||
+    (state == 1 && ft_strchr("+-",arg[index_s][index_c])))
+       ft_exit(2);
 	}
   tmp = tab->stack_A;
   while(tmp && tmp->next)
@@ -182,14 +182,16 @@ void 	push_to_stack_median(t_pushswap *tab, int pivot)
 	t_dlist *tmp;
 
 	tmp = NULL;
-  //printf("pivot = %d\n", pivot);
 	while(tab->stack_A != tmp)
 	{
 		if (tab->stack_A->dta >= pivot)
 			execute_instruction(tab, 1, PUSH, "PB\n");
-    else if (!tmp)
+    if (tab->stack_A->dta < pivot && !tmp)
       tmp = tab->stack_A;
-    tab->stack_A = tab->stack_A->next;
+    if (tab->stack_A->dta < pivot && tab->stack_A->next->dta < pivot)
+      execute_instruction(tab, 0, ROTATE, "RA\n");
+    if (tab->stack_A->dta < pivot && tab->stack_A->next->dta >= pivot)
+      execute_instruction(tab, 0, SWITCH, "SA\n");
 	}
 }
 
@@ -218,6 +220,7 @@ int main(int argc, char **argv)
 	   get_argc_to_tab(tab, argc, argv, 0);
      get_instruc(tab, ft_dlist_len(tab->stack_A));
      affiche_stack(tab, 3);
+     printf("%s\n", tab->registre);
    }
    return(0);
 }

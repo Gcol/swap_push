@@ -23,7 +23,6 @@ CC = clang $(FLAGS) $(INC)
 ## List of Functions
 
 SRC_FT =	push_swap		\
-					parser_swap	\
 
 ## List of Utilities
 
