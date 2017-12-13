@@ -131,9 +131,10 @@ void get_argc_to_tab(t_pushswap *tab, int nb_arg, char **arg, int state)
 		}
 		if (state == 0 && ft_strchr("+-1234567890",arg[index_s][index_c]))
 			state = 1;
-		if ((state == 0 && !ft_isspace(arg[index_s][index_c])) ||
+		else if ((state == 0 && !ft_isspace(arg[index_s][index_c])) ||
      (state == 1 && !ft_strchr("1234567890",arg[index_s][index_c])))
-			ft_exit(2);
+         ft_exit(2);
+
 	}
   tmp = tab->stack_A;
   while(tmp && tmp->next)
@@ -153,6 +154,7 @@ int median(t_dlist *stack, int size, int bigger, int lower)
   cur = stack;
   while( position != 0 && position != -1)
   {
+    printf("bigger = %d lower = %d position = %d cur-Nb = %ld\n", bigger, lower, position, cur->dta);
       cmp = -1;
       position = 0;
       tmp = stack;
@@ -179,10 +181,14 @@ void 	push_to_stack_median(t_pushswap *tab, int pivot)
 	t_dlist *tmp;
 
 	tmp = NULL;
+  printf("pivot = %d\n", pivot);
 	while(tab->stack_A != tmp)
 	{
 		if (tab->stack_A->dta >= pivot)
 			execute_instruction(tab, 1, PUSH, 0);
+    else if (!tmp)
+      tmp = tab->stack_A;
+    tab->stack_A = tab->stack_A->next;
 	}
 }
 
@@ -190,6 +196,7 @@ void  get_instruc(t_pushswap *tab, int size)
 {
   if (verif_pile(tab, size, 'C'))
     return ;
+
 	push_to_stack_median(tab, median(tab->stack_A, size, 0, 0));
 	//tri_stack(tab);
 }
