@@ -1,14 +1,13 @@
 #include <libft.h>
 #include <stdlib.h>
 
-
-enum {PUSH, D_ROTATE, ROTATE, SWITCH};
+enum {D_ROTATE, PUSH, ROTATE, SWITCH};
 
 typedef struct	s_pushswap
 {
   t_dlist *stack_A;
   t_dlist *stack_B;
-  char  *registre;
+  char  *res;
 }				t_pushswap;
 
 
