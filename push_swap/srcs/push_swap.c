@@ -70,7 +70,7 @@ void  execute_instruction(t_pushswap *tab, int choice, int inst, int rec)
 	int tmp;
 
 	if (rec)
-		tab->res = ft_stradd(tab->res, choice_register(choice, inst), 0, 1);
+    printf("%s", choice_register(choice, inst));
 	if (choice == 3 && !(choice = 0))
 		execute_instruction(tab, 1, inst, 0);
 	target = choice == 0 ? &(tab->stack_A) : &(tab->stack_B);
@@ -184,29 +184,35 @@ void get_argc_to_tab(t_pushswap *tab, int nb_arg, char **arg, int state)
  */
 
 
-int median(t_dlist *stack, int size, int position, int cible)
+int median(t_dlist *stack, int size, int position)
 {
-	t_dlist *cur;
-	t_dlist *tmp;
-	int cmp;
+  int		bigger;
+	int		lower;
+	int		i;
+	t_dlist	*cur;
+	t_dlist	*tmp;
 
 	cur = stack;
-	while( position != 0 && position != -1)
+	bigger = INT_MAX;
+	lower = INT_MIN;
+	while (position != 0 && position != 1)
 	{
-		cmp = -1;
+		i = -1;
+    position = (cur->dta > lower && cur->dta < bigger) ? 0 : position;
 		tmp = stack;
-		position = 0;
-		while(++cmp < size)
+    printf("bigger = %d lower = %d nb = %ld\n", bigger, lower, cur->dta);
+    sleep(1);
+		while (++i < size)
 		{
-			if ((cur->dta < tmp->dta && !cible) || (cur->dta > tmp->dta && cible))
-				position += 1;
-			else if ((cur->dta > tmp->dta && !cible) || (cur->dta < tmp->dta && cible))
-				position -=1;
+			position -= (cur->dta < tmp->dta);
+			position += (cur->dta > tmp->dta);
 			tmp = tmp->next;
 		}
+    bigger = (position > 1) ? cur->dta : bigger;
+    lower = (position < 0) ? cur->dta : lower;
 		cur = cur->next;
 	}
-	return(cur->prev->dta);
+	return (cur->prev->dta);
 }
 
 int 	push_to_stack_median(t_pushswap *tab, int cible, int pivot)
@@ -226,8 +232,6 @@ void  tri_stack_3(t_pushswap *tab, int size, int cible)
 {
 	if (!verif_pile(tab, size - 1, (cible) ? 'D' : 'C'))
 	{
-		if (size == 3 )
-		{
       if (!verif_pile(tab, 1, (cible) ? 'D' : 'C'))
         execute_instruction(tab, cible, SWITCH, 1);
       else
@@ -237,9 +241,6 @@ void  tri_stack_3(t_pushswap *tab, int size, int cible)
         execute_instruction(tab, cible, D_ROTATE, 1);
 			}
 			tri_stack_3(tab, size, cible);
-  	}
-		else
-			execute_instruction(tab, cible, SWITCH, 1);
 	}
 }
 
@@ -250,21 +251,24 @@ void  get_instruc(t_pushswap *tab, int size, int cible, int first_iter)
 	int nb_rotate;
   int nb_sup_median;
 
-  pivot = median((!cible) ? tab->stack_A : tab->stack_B, size, 1, cible);
   nb_rotate = 0;
   nb_sup_median = 0;
+    pivot = median((!cible) ? tab->stack_A : tab->stack_B, size, 0);
 	if (verif_pile(tab, size, (cible) ? 'D' : 'C'))
 	return;
+
   while (size > 3 && nb_sup_median < (size / 2) + (size % 2 && cible) && ++nb_rotate)
     nb_sup_median += push_to_stack_median(tab, cible, pivot);
   while ((cible || !first_iter) && (nb_rotate--) - nb_sup_median)
     execute_instruction(tab, cible, D_ROTATE, 1);
+  if (nb_sup_median && cible)
+    get_instruc(tab, nb_sup_median, !cible, 0);
 	if (size  - nb_sup_median <= 3)
     tri_stack_3(tab, size - nb_sup_median, cible);
 	else
-		get_instruc(tab, size - nb_sup_median, cible, first_iter);
-  if (nb_sup_median)
-		get_instruc(tab, nb_sup_median, !cible, !cible && first_iter);
+		get_instruc(tab, size - nb_sup_median, cible , (first_iter == 2) ? first_iter - 1 : first_iter);
+  if (nb_sup_median && !cible)
+		get_instruc(tab, nb_sup_median, !cible, (first_iter == 2) ? 1 : 0);
   while (nb_sup_median--)
     execute_instruction(tab, cible, PUSH, 1);
 }
@@ -280,7 +284,6 @@ int main(int argc, char **argv)
 		get_argc_to_tab(tab, argc, argv, 0);
 		get_instruc(tab, ft_dlist_len(tab->stack_A), 0, 1);
     //affiche_stack(tab, 3, ft_dlist_len(tab->stack_A));
-		printf("%s\n", tab->res);
 	}
 	return(0);
 }
