@@ -1,1 +1,1 @@
-ARG=`ruby -e "puts ($1..$2).to_a.shuffle.join(' ')"`
+ARG=`ruby -e "puts (0..500).to_a.shuffle.join(' ')"`

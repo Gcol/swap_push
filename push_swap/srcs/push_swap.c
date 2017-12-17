@@ -1,31 +1,43 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   push_swap.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gcollett <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/12/17 19:19:52 by gcollett          #+#    #+#             */
+/*   Updated: 2017/12/17 22:25:05 by gcollett         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <push_swap.h>
 #include "libft.h"
 #include <limits.h>
 
 #include <stdio.h>
 
-void affiche_stack(t_pushswap *tab, int choix, int size)
+void	affiche_stack(t_pushswap *tab, int choix, int size)
 {
-	t_dlist *tmp;
-  int cmp;
+	t_dlist	*tmp;
+	int		cmp;
 
-  cmp = 0;
+	cmp = -1;
 	if (choix == 1 || choix == 3)
 	{
 		tmp = tab->stack_A;
 		write(1, "Pile A : \n", 10);
-		while(tmp && ++cmp < size)
+		while (tmp && ++cmp < size)
 		{
 			printf("%ld\n", tmp->dta);
 			tmp = (tmp->next == tab->stack_A) ? NULL : tmp->next;
 		}
 	}
-  cmp = 0;
+	cmp = -1;
 	if (choix == 2 || choix == 3)
 	{
 		tmp = tab->stack_B;
 		write(1, "Pile B : \n", 10);
-		while(tmp && ++cmp < size)
+		while (tmp && ++cmp < size)
 		{
 			printf("%ld\n", tmp->dta);
 			tmp = (tmp->next == tab->stack_B) ? NULL : tmp->next;
@@ -33,10 +45,10 @@ void affiche_stack(t_pushswap *tab, int choix, int size)
 	}
 }
 
-char *choice_register(int choice, int inst)
+char	*choice_register(int choice, int inst)
 {
-	char *res;
-	int len;
+	char	*res;
+	int		len;
 
 	res = ft_memalloc_exit(4);
 	if (inst == D_ROTATE)
@@ -47,7 +59,7 @@ char *choice_register(int choice, int inst)
 	else
 		len = 1;
 	res[len + 1] = '\n';
-	if ( inst == D_ROTATE || inst == ROTATE)
+	if (inst == D_ROTATE || inst == ROTATE)
 		res[0] = 'r';
 	else if (inst == SWITCH)
 		res[len - 1] = 's';
@@ -58,46 +70,169 @@ char *choice_register(int choice, int inst)
 	else if (choice == 1)
 		res[len] = 'b';
 	else
-		res[len] = res[len -1];
+		res[len] = res[len - 1];
 	return (res);
 }
 
-/*collicion avec la maniere de lancer RR*/
-
-void  execute_instruction(t_pushswap *tab, int choice, int inst, int rec)
+void fill_buffer(t_pushswap *tab, char *test)
 {
-	t_dlist **target;
-	int tmp;
+	int i;
+
+	i = -1;
+	if (tab->registre->index + 4 > 500)
+	{
+		tab->registre->next = ft_memalloc_exit(sizeof(t_buffer));
+		tab->registre = tab->registre->next;
+	}
+	while (test[++i])
+		tab->registre->reg[tab->registre->index++] = test[i];
+	free(test);
+}
+
+void	execute_instruction(t_pushswap *t, int choice, int inst, int rec)
+{
+	t_dlist	**id;
+	int		tmp;
 
 	if (rec)
-    printf("%s", choice_register(choice, inst));
+		fill_buffer(t, choice_register(choice, inst));
 	if (choice == 3 && !(choice = 0))
-		execute_instruction(tab, 1, inst, 0);
-	target = choice == 0 ? &(tab->stack_A) : &(tab->stack_B);
+		execute_instruction(t, 1, inst, 0);
+	id = (choice == 0) ? &t->stack_A : &t->stack_B;
 	if (inst == PUSH)
 	{
-		if ((choice == 0) ? tab->stack_B : tab->stack_A)
+		if ((choice == 0) ? t->stack_B : t->stack_A)
 		{
-			ft_dlist_add(target, 0, ((choice == 0) ? tab->stack_B : tab->stack_A)->dta);
-			ft_dlist_remove(((choice == 0) ? &tab->stack_B : &tab->stack_A), 0);
+			ft_dlist_add(id, 0, ((choice == 0) ? t->stack_B : t->stack_A)->dta);
+			ft_dlist_remove(((choice == 0) ? &t->stack_B : &t->stack_A), 0);
 		}
 	}
-	else if (inst == D_ROTATE && (*target) && (*target)->prev)
-		(*target) = (*target)->prev;
-	else if (inst == ROTATE && (*target) && (*target)->next)
-		(*target) = (*target)->next;
-	else if (inst == SWITCH && (*target) && (*target)->next)
+	else if (inst == D_ROTATE && *id && (*id)->prev)
+		*id = (*id)->prev;
+	else if (inst == ROTATE && *id && (*id)->next)
+		*id = (*id)->next;
+	else if (inst == SWITCH && *id && (*id)->next)
 	{
-		tmp = (*target)->dta;
-		(*target)->dta  = (*target)->next->dta;
-		(*target)->next->dta = tmp;
+		tmp = (*id)->dta;
+		(*id)->dta = (*id)->next->dta;
+		(*id)->next->dta = tmp;
 	}
 }
 
-t_dlist  *add_stack(char *str, t_dlist *stack, int test,t_dlist *res)
+int		verif_pile(t_pushswap *tab, int size, char sens)
 {
-	long long value;
+	t_dlist	*tmp;
+	int		cmp;
 
+	cmp = -1;
+	if (sens == 'C')
+		tmp = tab->stack_A;
+	else
+		tmp = tab->stack_B;
+	while (++cmp < size && tmp->next != tab->stack_A && sens != 2)
+	{
+		if ((tmp->dta > tmp->next->dta && sens == 'C') ||
+				(tmp->dta < tmp->next->dta && sens == 'D'))
+			sens = 2;
+		tmp = tmp->next;
+	}
+	if (sens != 2)
+		return (1);
+	else
+		return (0);
+}
+
+int		median(t_dlist *stack, int size, int position, int bigger)
+{
+	int		lower;
+	int		i;
+	t_dlist	*cur;
+	t_dlist	*tmp;
+
+	cur = stack;
+	lower = INT_MIN;
+	while (position != 0 && position != 1)
+	{
+		position = (cur->dta > lower && cur->dta < bigger) ? 0 : position;
+		tmp = stack;
+		if (cur->dta > lower && cur->dta < bigger && (i = -1))
+		{
+				while (++i < size)
+				{
+					position -= (cur->dta < tmp->dta);
+					position += (cur->dta > tmp->dta);
+					tmp = tmp->next;
+				}
+			bigger = (position > 1) ? cur->dta : bigger;
+			lower = (position < 0) ? cur->dta : lower;
+		}
+		cur = cur->next;
+	}
+	return (cur->prev->dta);
+}
+
+int		push_to_stack_median(t_pushswap *tab, int cible, int pivot)
+{
+	if ((!cible && (tab->stack_A->dta < pivot))
+			|| (cible && (tab->stack_B->dta >= pivot)))
+	{
+		execute_instruction(tab, !cible, PUSH, 1);
+		return (1);
+	}
+	else
+		execute_instruction(tab, cible, ROTATE, 1);
+	return (0);
+}
+
+void	tri_stack_3(t_pushswap *tab, int size, int cible)
+{
+	if (!verif_pile(tab, size - 1, (cible) ? 'D' : 'C'))
+	{
+		if (!verif_pile(tab, 1, (cible) ? 'D' : 'C'))
+			execute_instruction(tab, cible, SWITCH, 1);
+		else
+		{
+			execute_instruction(tab, cible, ROTATE, 1);
+			execute_instruction(tab, cible, SWITCH, 1);
+			execute_instruction(tab, cible, D_ROTATE, 1);
+		}
+		tri_stack_3(tab, size, cible);
+	}
+}
+
+void	get_instruc(t_pushswap *tab, int size, int cible, int fiter)
+{
+	int	pivot;
+	int	nb_rot;
+	int	nb_supm;
+
+	nb_rot = 0;
+	nb_supm = 0;
+	pivot = median((!cible) ? tab->stack_A : tab->stack_B, size, -1, INT_MAX);
+	if (verif_pile(tab, size, (cible) ? 'D' : 'C'))
+		return ;
+	while (size > 3 && nb_supm < (size / 2) + (size % 2 && cible) && ++nb_rot)
+		nb_supm += push_to_stack_median(tab, cible, pivot);
+	while ((cible || !fiter) && (nb_rot--) - nb_supm)
+		execute_instruction(tab, cible, D_ROTATE, 1);
+	if (nb_supm && cible)
+		get_instruc(tab, nb_supm, !cible, 0);
+	if (size - nb_supm <= 3)
+		tri_stack_3(tab, size - nb_supm, cible);
+	else
+		get_instruc(tab, size - nb_supm, cible, (fiter == 2) ? --fiter : fiter);
+	if (nb_supm && !cible)
+		get_instruc(tab, nb_supm, !cible, (fiter == 2) ? 1 : 0);
+	while (nb_supm--)
+		execute_instruction(tab, cible, PUSH, 1);
+}
+
+t_dlist	*add_st(char *str, t_dlist *stack, t_dlist *res)
+{
+	long long	value;
+	int			test;
+
+	test = 0;
 	test = ft_atoi(str);
 	value = ft_atoll(str);
 	if (test != value)
@@ -110,7 +245,7 @@ t_dlist  *add_stack(char *str, t_dlist *stack, int test,t_dlist *res)
 	else
 	{
 		res = stack;
-		while(res->next && res->dta != test)
+		while (res->next && res->dta != test)
 			res = res->next;
 		if (res->dta == test)
 			ft_exit(2);
@@ -118,172 +253,66 @@ t_dlist  *add_stack(char *str, t_dlist *stack, int test,t_dlist *res)
 		res->next->dta = test;
 		res->next->prev = res;
 	}
-	return(stack);
+	return (stack);
 }
 
-
-int  verif_pile(t_pushswap *tab, int size, char sens)
+void	get_argc_to_tab(t_pushswap *tab, char **arg, long cnt_c, int argc)
 {
-	t_dlist *tmp;
-	int cmp;
+	int index_s;
+	int state;
+	int i;
 
-	cmp = -1;
-	if (sens == 'C')
-		tmp = tab->stack_A;
-	else
-		tmp = tab->stack_B;
-	while(++cmp < size && tmp->next != tab->stack_A && sens != 2)
+	i = 0;
+	index_s = 0;
+	while (++index_s < argc && !(state = 0))
 	{
-		if ((tmp->dta > tmp->next->dta && sens == 'C') ||
-				(tmp->dta < tmp->next->dta && sens == 'D'))
-          sens = 2;
-		tmp = tmp->next;
-	}
-	if (sens != 2)
-		return(1);
-	else
-		return(0);
-}
-
-
-void get_argc_to_tab(t_pushswap *tab, int nb_arg, char **arg, int state)
-{
-	long   index_c;
-	t_dlist  *tmp;
-	int    index_s;
-
-	index_s = 1;
-	index_c = -1;
-	while(state < 3)
-	{
-		if ((ft_isspace(arg[index_s][index_c]) || (!arg[index_s][++index_c] && !(index_c = 0))))
+		cnt_c = ft_strlen(arg[index_s]);
+		while (--cnt_c)
 		{
-			tab->stack_A = add_stack(arg[index_s], tab->stack_A, 0, NULL);
-			if (!ft_isspace(arg[index_s][index_c]))
-				index_s += 1;
+			if (ft_isspace(arg[index_s][cnt_c]) && state >= 2 && !(state = 0))
+				tab->stack_A = add_st(arg[index_s] + cnt_c, tab->stack_A, NULL);
+			else if (state % 2 == 0 && ft_strchr("+-", arg[index_s][cnt_c]))
+				state += 1;
+			else if (ft_strchr("1234567890", arg[index_s][cnt_c]))
+				state += (state < 2) ? 2 : 0;
 			else
-				index_c++;
-			state = (index_s < nb_arg) ? 0 : 3;
+				ft_exit(2);
 		}
-		if (state == 0 && ft_strchr("+-",arg[index_s][index_c]))
-			state = 1;
-		else if (state != 3 && ((!ft_isspace(arg[index_s][index_c]) &&
-						!ft_strchr("1234567890",arg[index_s][index_c])) ||
-					(state == 1 && ft_strchr("+-",arg[index_s][index_c]))))
+		if (ft_strchr("1234567890", arg[index_s][cnt_c]))
+			tab->stack_A = add_st(arg[index_s], tab->stack_A, NULL);
+		else
 			ft_exit(2);
 	}
-	tmp = tab->stack_A;
-	while(tmp && tmp->next)
-		tmp = tmp->next;
-	tmp->next = tab->stack_A;
-	tab->stack_A->prev = tmp;
 }
-/*
- **
- **  a voir bigger lower
- */
 
-
-int median(t_dlist *stack, int size, int position)
+void read_buffer(t_pushswap *tab)
 {
-  int		bigger;
-	int		lower;
-	int		i;
-	t_dlist	*cur;
-	t_dlist	*tmp;
-
-	cur = stack;
-	bigger = INT_MAX;
-	lower = INT_MIN;
-	while (position != 0 && position != 1)
+	tab->registre = tab->origine;
+	while(tab->registre)
 	{
-		i = -1;
-    position = (cur->dta > lower && cur->dta < bigger) ? 0 : position;
-		tmp = stack;
-    printf("bigger = %d lower = %d nb = %ld\n", bigger, lower, cur->dta);
-    sleep(1);
-		while (++i < size)
-		{
-			position -= (cur->dta < tmp->dta);
-			position += (cur->dta > tmp->dta);
-			tmp = tmp->next;
-		}
-    bigger = (position > 1) ? cur->dta : bigger;
-    lower = (position < 0) ? cur->dta : lower;
-		cur = cur->next;
-	}
-	return (cur->prev->dta);
-}
-
-int 	push_to_stack_median(t_pushswap *tab, int cible, int pivot)
-{
-		if ((!cible && (tab->stack_A->dta < pivot))
-    || (cible && (tab->stack_B->dta >= pivot)))
-    {
-      execute_instruction(tab, !cible, PUSH, 1);
-      return(1);
-    }
-		else
-        execute_instruction(tab, cible, ROTATE, 1);
-    return(0);
-}
-
-void  tri_stack_3(t_pushswap *tab, int size, int cible)
-{
-	if (!verif_pile(tab, size - 1, (cible) ? 'D' : 'C'))
-	{
-      if (!verif_pile(tab, 1, (cible) ? 'D' : 'C'))
-        execute_instruction(tab, cible, SWITCH, 1);
-      else
-			{
-        execute_instruction(tab, cible, ROTATE, 1);
-        execute_instruction(tab, cible, SWITCH, 1);
-        execute_instruction(tab, cible, D_ROTATE, 1);
-			}
-			tri_stack_3(tab, size, cible);
+		write(1, tab->registre->reg, tab->registre->index);
+		tab->registre = tab->registre->next;
 	}
 }
 
-
-void  get_instruc(t_pushswap *tab, int size, int cible, int first_iter)
+int		main(int argc, char **argv)
 {
-  int pivot;
-	int nb_rotate;
-  int nb_sup_median;
-
-  nb_rotate = 0;
-  nb_sup_median = 0;
-    pivot = median((!cible) ? tab->stack_A : tab->stack_B, size, 0);
-	if (verif_pile(tab, size, (cible) ? 'D' : 'C'))
-	return;
-
-  while (size > 3 && nb_sup_median < (size / 2) + (size % 2 && cible) && ++nb_rotate)
-    nb_sup_median += push_to_stack_median(tab, cible, pivot);
-  while ((cible || !first_iter) && (nb_rotate--) - nb_sup_median)
-    execute_instruction(tab, cible, D_ROTATE, 1);
-  if (nb_sup_median && cible)
-    get_instruc(tab, nb_sup_median, !cible, 0);
-	if (size  - nb_sup_median <= 3)
-    tri_stack_3(tab, size - nb_sup_median, cible);
-	else
-		get_instruc(tab, size - nb_sup_median, cible , (first_iter == 2) ? first_iter - 1 : first_iter);
-  if (nb_sup_median && !cible)
-		get_instruc(tab, nb_sup_median, !cible, (first_iter == 2) ? 1 : 0);
-  while (nb_sup_median--)
-    execute_instruction(tab, cible, PUSH, 1);
-}
-
-int main(int argc, char **argv)
-{
-	t_pushswap *tab;
+	t_pushswap	*tab;
+	t_dlist		*tmp;
 
 	tab = ft_memalloc_exit(sizeof(t_pushswap));
-	tab->res = ft_memalloc_exit(1);
+	tab->registre = ft_memalloc_exit(sizeof(t_buffer));
+	tab->origine = tab->registre;
 	if (argc > 1)
 	{
-		get_argc_to_tab(tab, argc, argv, 0);
+		get_argc_to_tab(tab, argv, -1, argc);
+		tmp = tab->stack_A;
+		while (tmp && tmp->next)
+			tmp = tmp->next;
+		tmp->next = tab->stack_A;
+		tab->stack_A->prev = tmp;
 		get_instruc(tab, ft_dlist_len(tab->stack_A), 0, 1);
-    //affiche_stack(tab, 3, ft_dlist_len(tab->stack_A));
+		read_buffer(tab);
 	}
-	return(0);
+	return (0);
 }

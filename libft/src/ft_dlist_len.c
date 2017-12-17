@@ -18,11 +18,8 @@ size_t	ft_dlist_len(t_dlist *lst)
 	size_t	i;
 
 	i = 1;
-	tmp = lst;
-	while (tmp->next != NULL && tmp->next != lst)
-	{
+	tmp = lst->next;
+	while (tmp != NULL && tmp != lst && ++i)
 		tmp = tmp->next;
-		i++;
-	}
 	return (i);
 }

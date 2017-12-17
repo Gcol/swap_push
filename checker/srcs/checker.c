@@ -17,26 +17,28 @@
 
 #include <stdio.h>
 
-
-void affiche_stack(t_pushswap *tab, int choix)
+void	affiche_stack(t_pushswap *tab, int choix, int size)
 {
-  t_dlist *tmp;
+	t_dlist	*tmp;
+	int		cmp;
 
+	cmp = -1;
 	if (choix == 1 || choix == 3)
 	{
-    tmp = tab->stack_A;
+		tmp = tab->stack_A;
 		write(1, "Pile A : \n", 10);
-		while(tmp)
+		while (tmp && ++cmp < size)
 		{
 			printf("%ld\n", tmp->dta);
 			tmp = (tmp->next == tab->stack_A) ? NULL : tmp->next;
 		}
 	}
+	cmp = -1;
 	if (choix == 2 || choix == 3)
 	{
-    tmp = tab->stack_B;
+		tmp = tab->stack_B;
 		write(1, "Pile B : \n", 10);
-		while(tmp)
+		while (tmp && ++cmp < size)
 		{
 			printf("%ld\n", tmp->dta);
 			tmp = (tmp->next == tab->stack_B) ? NULL : tmp->next;
@@ -44,10 +46,12 @@ void affiche_stack(t_pushswap *tab, int choix)
 	}
 }
 
-t_dlist  *add_stack(char *str, t_dlist *stack, int test,t_dlist *res)
+t_dlist	*add_stack(char *str, t_dlist *stack, t_dlist *res)
 {
-	long long value;
+	long long	value;
+	int			test;
 
+	test = 0;
 	test = ft_atoi(str);
 	value = ft_atoll(str);
 	if (test != value)
@@ -60,7 +64,7 @@ t_dlist  *add_stack(char *str, t_dlist *stack, int test,t_dlist *res)
 	else
 	{
 		res = stack;
-		while(res->next && res->dta != test)
+		while (res->next && res->dta != test)
 			res = res->next;
 		if (res->dta == test)
 			ft_exit(2);
@@ -68,98 +72,102 @@ t_dlist  *add_stack(char *str, t_dlist *stack, int test,t_dlist *res)
 		res->next->dta = test;
 		res->next->prev = res;
 	}
-	return(stack);
+	return (stack);
 }
 
-void get_argc_to_tab(t_pushswap *tab, int nb_arg, char **arg, int state)
-{
-	long   index_c;
-  t_dlist  *tmp;
-	int    index_s;
 
-	index_s = 1;
-	index_c = -1;
-	while(state < 3)
+void	get_argc_to_tab(t_pushswap *tab, char **arg, long cnt_c, int argc)
+{
+	int index_s;
+	int state;
+	int i;
+
+	i = 0;
+	index_s = 0;
+	while (++index_s < argc && !(state = 0))
 	{
-		if (!arg[index_s][++index_c] && !(index_c = 0))
+		cnt_c = ft_strlen(arg[index_s]);
+		while (--cnt_c)
 		{
-			tab->stack_A = add_stack(arg[index_s], tab->stack_A, 0, NULL);
-			index_s += 1;
-			state = (index_s < nb_arg) ? 0 : 3;
+			if (ft_isspace(arg[index_s][cnt_c]) && state >= 2 && !(state = 0))
+				tab->stack_A = add_stack(arg[index_s] + cnt_c, tab->stack_A, NULL);
+			else if (state % 2 == 0 && ft_strchr("+-", arg[index_s][cnt_c]))
+				state += 1;
+			else if (ft_strchr("1234567890", arg[index_s][cnt_c]))
+				state += (state < 2) ? 2 : 0;
+			else
+				ft_exit(2);
 		}
-		if (state == 0 && ft_strchr("+-1234567890",arg[index_s][index_c]))
-			state = 1;
-		if ((state == 0 && !ft_isspace(arg[index_s][index_c])) ||
-     (state == 1 && !ft_strchr("1234567890",arg[index_s][index_c])))
+		if (ft_strchr("1234567890", arg[index_s][cnt_c]))
+			tab->stack_A = add_stack(arg[index_s], tab->stack_A, NULL);
+		else
 			ft_exit(2);
 	}
-  tmp = tab->stack_A;
-  while(tmp && tmp->next)
-    tmp = tmp->next;
-  tmp->next = tab->stack_A;
-  tab->stack_A->prev = tmp;
 }
 
 //attention segfault sauvage avec RRR . A voir si c'est par ce que B est vide
 
-void  execute_instruction(t_pushswap *tab, int choice, int inst, int tmp)
+void	execute_instruction(t_pushswap *t, int choice, int inst)
 {
-  t_dlist **target;
+	t_dlist	**id;
+	int		tmp;
 
-  if (choice == 3 && !(choice = 0))
-    execute_instruction(tab, 1, inst, 0);
-  if (choice == 0)
-    target = &(tab->stack_A);
-  if (choice == 1)
-    target = &(tab->stack_B);
-  if (inst == PUSH)
-  {
-    if ((choice == 0) ? tab->stack_B : tab->stack_A)
-    {
-      ft_dlist_add(target, 0, ((choice == 0) ? tab->stack_B : tab->stack_A)->dta);
-      ft_dlist_remove(((choice == 0) ? &tab->stack_B : &tab->stack_A), 0);
-    }
-  }
-  else if (inst == D_ROTATE && (*target) && (*target)->prev)
-    (*target) = (*target)->prev;
-  else if (inst == ROTATE && (*target) && (*target)->next)
-      (*target) = (*target)->next;
-  else if (inst == SWITCH && (*target) && (*target)->next)
-  {
-    tmp = (*target)->dta;
-    (*target)->dta  = (*target)->next->dta;
-    (*target)->next->dta = tmp;
-  }
+	if (choice == 3 && !(choice = 0))
+		execute_instruction(t, 1, inst);
+	id = choice == 0 ? &(t->stack_A) : &(t->stack_B);
+	if (inst == PUSH)
+	{
+		if ((choice == 0) ? t->stack_B : t->stack_A)
+		{
+			ft_dlist_add(id, 0, ((choice == 0) ? t->stack_B : t->stack_A)->dta);
+			ft_dlist_remove(((choice == 0) ? &t->stack_B : &t->stack_A), 0);
+		}
+	}
+	else if (inst == D_ROTATE && (*id) && (*id)->prev)
+		(*id) = (*id)->prev;
+	else if (inst == ROTATE && (*id) && (*id)->next)
+		(*id) = (*id)->next;
+	else if (inst == SWITCH && (*id) && (*id)->next)
+	{
+		tmp = (*id)->dta;
+		(*id)->dta = (*id)->next->dta;
+		(*id)->next->dta = tmp;
+	}
 }
 
-void launch_instruction(t_pushswap *tab, int len, int choice, int ind)
+void launch_instruction(t_pushswap *tab, int len, int choice)
 {
 	char *str;
-  int ind;
 
 	while(get_next_line(0, &str) > 0)
 	{
-    ind = 0;
 		choice = 4;
-    while(ft_isspace(str[ind]))
-      ind++;
-    len = ft_strlen(str + ind);
-    while(ft_isspace(str[ind + --len]))
-      ;
-		if (str[ind] == str[ind + 1] && str[ind + 1] == str[ind + ++len - 1]
-       && ft_c_in_str(str[ind], "rs"))
+    len = ft_strlen(str);
+		if (str[0] == str[1] && str[len] == str[len - 1]
+       && ft_c_in_str(str[0], "rs"))
 			choice = 3;
-		if (str[ind + len - 1] == 'a' || str[ind + len - 1] == 'b')
-			choice = str[ind + len - 1] - 'a';
+		if (str[len - 1] == 'a' || str[len - 1] == 'b')
+			choice = str[len - 1] - 'a';
 		if (len == 2 && choice != 4)
-			execute_instruction(tab, choice, str[ind] - 'p', 0);
-		else if (str[ind] == 'r' && len == 3 && choice != 4)
-			execute_instruction(tab, choice, 1, 0);
+			execute_instruction(tab, choice, str[0] - 'p');
+		else if (str[0] == 'r' && len == 3 && choice != 4)
+			execute_instruction(tab, choice, 1);
 		else
 			ft_exit(3);
-    affiche_stack(tab, 3);
+    //affiche_stack(tab, 3, ft_dlist_len(tab->stack_A));
   	free(str);
 	}
+}
+
+void ft_dlist_make_circular(t_dlist *tab)
+{
+  t_dlist *tmp;
+
+  tmp = tab;
+  while (tmp && tmp->next)
+    tmp = tmp->next;
+  tmp->next = tab;
+  tab->prev = tmp;
 }
 
 void  verif_pile(t_pushswap *tab)
@@ -173,12 +181,9 @@ void  verif_pile(t_pushswap *tab)
     tmp = tab->stack_A->next;
     if (tab->stack_A->dta < tmp->dta)
       sens = 'C';
-    else if(tab->stack_A->dta > tmp->dta)
-      sens = 'D';
     while(tmp->next != tab->stack_A && sens != 2)
     {
-      if ((tmp->dta > tmp->next->dta && sens == 'C') ||
-      (tmp->dta < tmp->next->dta && sens == 'D'))
+      if ((tmp->dta > tmp->next->dta && sens == 'C'))
         sens = 2;
       tmp = tmp->next;
     }
@@ -197,10 +202,11 @@ int main(int argc, char **argv)
 	tab = ft_memalloc_exit(sizeof(t_pushswap));
   if (argc > 1)
   {
-	   get_argc_to_tab(tab, argc, argv, 0);
-     affiche_stack(tab, 3);
+	   get_argc_to_tab(tab, argv, 0, argc);
+     ft_dlist_make_circular(tab->stack_A);
    }
-	launch_instruction(tab, 0, 0, 0);
+	launch_instruction(tab, 0, 0);
 	verif_pile(tab);
+  while(1);
 	return (0);
 }
