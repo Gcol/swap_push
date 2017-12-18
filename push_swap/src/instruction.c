@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include <push_swap.h>
-#include <stdio.h>
 
 t_dlist	*add_st(char *str, t_dlist *stack, t_dlist *res)
 {

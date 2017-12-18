@@ -17,28 +17,28 @@ t_dlist	*add_st(char *str, t_dlist *stack, t_dlist *res)
 	long long	value;
 	int			test;
 
-	test = 0;
 	test = ft_atoi(str);
 	value = ft_atoll(str);
 	if (test != value)
 		ft_exit(2);
 	if (!stack)
 	{
-		stack = ft_memalloc_exit(sizeof(t_dlist));
-		stack->dta = test;
+		res = ft_memalloc_exit(sizeof(t_dlist));
+		res->dta = test;
 	}
 	else
 	{
 		res = stack;
-		while (res->next && res->dta != test)
-			res = res->next;
+		while (res->prev && res->dta != test)
+			res = res->prev;
 		if (res->dta == test)
 			ft_exit(2);
-		res->next = ft_memalloc_exit(sizeof(t_dlist));
-		res->next->dta = test;
-		res->next->prev = res;
+		res->prev = ft_memalloc_exit(sizeof(t_dlist));
+		res->prev->dta = test;
+		res->prev->next = res;
+		res = res->prev;
 	}
-	return (stack);
+	return (res);
 }
 
 void	get_argc_to_tab(t_pushswap *tab, char **arg, long cnt_c, int index_s)
