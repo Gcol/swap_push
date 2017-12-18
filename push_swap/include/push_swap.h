@@ -3,7 +3,6 @@
 #include <limits.h>
 
 enum {D_ROTATE, ROTATE, SWITCH, PUSH};
-enum {RRA, RRB, RRR, RA, RB, RR, SA, SB, SS, PA, RB, PP}
 
 typedef struct	s_buffer
 {
@@ -20,10 +19,10 @@ typedef struct	s_pushswap
   t_buffer *origine;
 }				t_pushswap;
 
-void fill_buffer(t_pushswap *tab, int inst, char *trad);
+void fill_buffer(t_pushswap *tab, char *trad);
 void	tri_stack_3(t_pushswap *tab, int size, int cible);
 char	*choice_register(int choice, int inst);
 void	get_argc_to_tab(t_pushswap *tab, char **arg, long cnt_c, int argc);
-void	execute_instruction(t_pushswap *t, int choice, int inst, int rec);
+void	execute_instruction(t_pushswap *t, int choice, int inst);
 void	get_instruc(t_pushswap *tab, int size, int cible, int fiter);
 int		verif_pile(t_pushswap *tab, int size, char sens);
