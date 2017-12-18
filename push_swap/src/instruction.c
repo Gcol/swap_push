@@ -61,13 +61,13 @@ void	get_argc_to_tab(t_pushswap *tab, char **arg, long cnt_c, int argc)
 	}
 }
 
-void	execute_instruction(t_pushswap *t, int choice, int inst, int write)
+void	execute_instruction(t_pushswap *t, int choice, int inst, int rec)
 {
 	t_dlist	**id;
 	int		tmp;
 
 	if (rec)
-		fill_buffer(t, write, NULL);
+		fill_buffer(t, choice_register(choice, inst));
 	if (choice == 3 && !(choice = 0))
 		execute_instruction(t, 1, inst, 0);
 	id = (choice == 0) ? &t->stack_A : &t->stack_B;
@@ -89,3 +89,33 @@ void	execute_instruction(t_pushswap *t, int choice, int inst, int write)
 		(*id)->dta = (*id)->next->dta;
 		(*id)->next->dta = tmp;
 	}
+}
+
+char	*choice_register(int choice, int inst)
+{
+	char	*res;
+	int		len;
+
+	res = ft_memalloc_exit(4);
+	if (inst == D_ROTATE)
+	{
+		len = 2;
+		res[1] = 'r';
+	}
+	else
+		len = 1;
+	res[len + 1] = '\n';
+	if (inst == D_ROTATE || inst == ROTATE)
+		res[0] = 'r';
+	else if (inst == SWITCH)
+		res[len - 1] = 's';
+	else if (inst == PUSH)
+		res[len - 1] = 'p';
+	if (choice == 0)
+		res[len] = 'a';
+	else if (choice == 1)
+		res[len] = 'b';
+	else
+		res[len] = res[len - 1];
+	return (res);
+}
