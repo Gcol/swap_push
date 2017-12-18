@@ -6,7 +6,7 @@
 /*   By: gcollett <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/05 11:21:42 by gcollett          #+#    #+#             */
-/*   Updated: 2017/12/12 23:53:59 by gcollett         ###   ########.fr       */
+/*   Updated: 2017/12/18 19:08:00 by gcollett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,6 @@ void			ft_dlist_add(t_dlist **target, int index, int value);
 void			ft_dlist_remove(t_dlist **target, int index);
 size_t			ft_dlist_len(t_dlist *lst);
 char			*ft_strjoin_free(char *s1, char *s2);
-void ft_dlist_make_circular(t_dlist *tab);
+void			ft_dlist_make_circular(t_dlist *tab);
 
 #endif

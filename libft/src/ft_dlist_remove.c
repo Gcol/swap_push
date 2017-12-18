@@ -6,7 +6,7 @@
 /*   By: gcollett <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 23:58:15 by gcollett          #+#    #+#             */
-/*   Updated: 2017/12/12 23:58:51 by gcollett         ###   ########.fr       */
+/*   Updated: 2017/12/18 19:07:22 by gcollett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,12 @@ void	ft_dlist_remove(t_dlist **target, int index)
 			tmp = (*target)->prev;
 		if ((*target)->next && (*target)->prev)
 			(*target)->prev->next = (*target)->next;
-	  else if ((*target)->prev)
+		else if ((*target)->prev)
 			(*target)->prev->next = NULL;
 		if ((*target)->next && (*target)->prev)
 			(*target)->next->prev = (*target)->prev;
 		else if ((*target)->next)
-		  (*target)->next->prev = NULL;
+			(*target)->next->prev = NULL;
 		ft_memdel((void**)&(*target));
 		(*target) = tmp;
 	}

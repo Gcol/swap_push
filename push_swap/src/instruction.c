@@ -1,82 +1,90 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   instruction.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gcollett <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/12/18 19:21:01 by gcollett          #+#    #+#             */
+/*   Updated: 2017/12/18 19:21:59 by gcollett         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include <push_swap.h>
-
+#include <stdio.h>
 
 t_dlist	*add_st(char *str, t_dlist *stack, t_dlist *res)
 {
 	long long	value;
 	int			test;
 
-	test = 0;
 	test = ft_atoi(str);
 	value = ft_atoll(str);
 	if (test != value)
 		ft_exit(2);
 	if (!stack)
 	{
-		stack = ft_memalloc_exit(sizeof(t_dlist));
-		stack->dta = test;
+		res = ft_memalloc_exit(sizeof(t_dlist));
+		res->dta = test;
 	}
 	else
 	{
 		res = stack;
-		while (res->next && res->dta != test)
-			res = res->next;
+		while (res->prev && res->dta != test)
+			res = res->prev;
 		if (res->dta == test)
 			ft_exit(2);
-		res->next = ft_memalloc_exit(sizeof(t_dlist));
-		res->next->dta = test;
-		res->next->prev = res;
+		res->prev = ft_memalloc_exit(sizeof(t_dlist));
+		res->prev->dta = test;
+		res->prev->next = res;
+		res = res->prev;
 	}
-	return (stack);
+	return (res);
 }
 
-
-void	get_argc_to_tab(t_pushswap *tab, char **arg, long cnt_c, int argc)
+void	get_argc_to_tab(t_pushswap *tab, char **arg, long cnt_c, int index_s)
 {
-	int index_s;
 	int state;
 	int i;
 
 	i = 0;
-	index_s = 0;
-	while (++index_s < argc && !(state = 0))
+	while (--index_s && !(state = 0))
 	{
 		cnt_c = ft_strlen(arg[index_s]);
 		while (--cnt_c)
 		{
 			if (ft_isspace(arg[index_s][cnt_c]) && state >= 2 && !(state = 0))
-				tab->stack_A = add_st(arg[index_s] + cnt_c, tab->stack_A, NULL);
-			else if (state % 2 == 0 && ft_strchr("+-", arg[index_s][cnt_c]))
+				tab->stack_a = add_st(arg[index_s] + cnt_c, tab->stack_a, NULL);
+			else if (state == 2 && ft_strchr("+-", arg[index_s][cnt_c]))
 				state += 1;
 			else if (ft_strchr("1234567890", arg[index_s][cnt_c]))
 				state += (state < 2) ? 2 : 0;
 			else
 				ft_exit(2);
 		}
-		if (ft_strchr("1234567890", arg[index_s][cnt_c]))
-			tab->stack_A = add_st(arg[index_s], tab->stack_A, NULL);
+		if (ft_strchr("1234567890", arg[index_s][cnt_c])
+		|| ((state == 2) && ft_strchr("+-", arg[index_s][cnt_c])))
+			tab->stack_a = add_st(arg[index_s], tab->stack_a, NULL);
 		else
 			ft_exit(2);
 	}
 }
 
-void	execute_instruction(t_pushswap *t, int choice, int inst, int rec)
+void	execute_instruction(t_pushswap *t, int choice, int inst)
 {
 	t_dlist	**id;
 	int		tmp;
 
-	if (rec)
-		fill_buffer(t, choice_register(choice, inst));
+	fill_buffer(t, choice_register(choice, inst));
 	if (choice == 3 && !(choice = 0))
-		execute_instruction(t, 1, inst, 0);
-	id = (choice == 0) ? &t->stack_A : &t->stack_B;
+		execute_instruction(t, 1, inst);
+	id = (choice == 0) ? &t->stack_a : &t->stack_b;
 	if (inst == PUSH)
 	{
-		if ((choice == 0) ? t->stack_B : t->stack_A)
+		if ((choice == 0) ? t->stack_b : t->stack_a)
 		{
-			ft_dlist_add(id, 0, ((choice == 0) ? t->stack_B : t->stack_A)->dta);
-			ft_dlist_remove(((choice == 0) ? &t->stack_B : &t->stack_A), 0);
+			ft_dlist_add(id, 0, ((choice == 0) ? t->stack_b : t->stack_a)->dta);
+			ft_dlist_remove(((choice == 0) ? &t->stack_b : &t->stack_a), 0);
 		}
 	}
 	else if (inst == D_ROTATE && *id && (*id)->prev)

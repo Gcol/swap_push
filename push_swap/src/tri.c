@@ -1,6 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tri.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gcollett <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/12/18 19:22:12 by gcollett          #+#    #+#             */
+/*   Updated: 2017/12/18 19:22:31 by gcollett         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <push_swap.h>
-
-
 
 int		median(t_dlist *stack, int size, int position, int bigger)
 {
@@ -17,12 +27,12 @@ int		median(t_dlist *stack, int size, int position, int bigger)
 		tmp = stack;
 		if (cur->dta > lower && cur->dta < bigger && (i = -1))
 		{
-				while (++i < size)
-				{
-					position -= (cur->dta < tmp->dta);
-					position += (cur->dta > tmp->dta);
-					tmp = tmp->next;
-				}
+			while (++i < size)
+			{
+				position -= (cur->dta < tmp->dta);
+				position += (cur->dta > tmp->dta);
+				tmp = tmp->next;
+			}
 			bigger = (position > 1) ? cur->dta : bigger;
 			lower = (position < 0) ? cur->dta : lower;
 		}
@@ -33,14 +43,14 @@ int		median(t_dlist *stack, int size, int position, int bigger)
 
 int		push_to_stack_median(t_pushswap *tab, int cible, int pivot)
 {
-	if ((!cible && (tab->stack_A->dta < pivot))
-			|| (cible && (tab->stack_B->dta >= pivot)))
+	if ((!cible && (tab->stack_a->dta < pivot))
+			|| (cible && (tab->stack_b->dta >= pivot)))
 	{
-		execute_instruction(tab, !cible, PUSH, 1);
+		execute_instruction(tab, !cible, PUSH);
 		return (1);
 	}
 	else
-		execute_instruction(tab, cible, ROTATE, 1);
+		execute_instruction(tab, cible, ROTATE);
 	return (0);
 }
 
@@ -49,17 +59,16 @@ void	tri_stack_3(t_pushswap *tab, int size, int cible)
 	if (!verif_pile(tab, size - 1, (cible) ? 'D' : 'C'))
 	{
 		if (!verif_pile(tab, 1, (cible) ? 'D' : 'C'))
-			execute_instruction(tab, cible, SWITCH, 1);
+			execute_instruction(tab, cible, SWITCH);
 		else
 		{
-			execute_instruction(tab, cible, ROTATE, 1);
-			execute_instruction(tab, cible, SWITCH, 1);
-			execute_instruction(tab, cible, D_ROTATE, 1);
+			execute_instruction(tab, cible, ROTATE);
+			execute_instruction(tab, cible, SWITCH);
+			execute_instruction(tab, cible, D_ROTATE);
 		}
 		tri_stack_3(tab, size, cible);
 	}
 }
-
 
 void	get_instruc(t_pushswap *tab, int size, int cible, int fiter)
 {
@@ -69,13 +78,13 @@ void	get_instruc(t_pushswap *tab, int size, int cible, int fiter)
 
 	nb_rot = 0;
 	nb_supm = 0;
-	pivot = median((!cible) ? tab->stack_A : tab->stack_B, size, -1, INT_MAX);
-	if (verif_pile(tab, size, (cible) ? 'D' : 'C'))
+	pivot = median((!cible) ? tab->stack_a : tab->stack_b, size, -1, INT_MAX);
+	if (verif_pile(tab, size, (cible) ? 'D' : 'C') || size == 1)
 		return ;
 	while (size > 3 && nb_supm < (size / 2) + (size % 2 && cible) && ++nb_rot)
 		nb_supm += push_to_stack_median(tab, cible, pivot);
 	while ((cible || !fiter) && (nb_rot--) - nb_supm)
-		execute_instruction(tab, cible, D_ROTATE, 1);
+		execute_instruction(tab, cible, D_ROTATE);
 	if (nb_supm && cible)
 		get_instruc(tab, nb_supm, !cible, 0);
 	if (size - nb_supm <= 3)
@@ -85,9 +94,8 @@ void	get_instruc(t_pushswap *tab, int size, int cible, int fiter)
 	if (nb_supm && !cible)
 		get_instruc(tab, nb_supm, !cible, (fiter == 2) ? 1 : 0);
 	while (nb_supm--)
-		execute_instruction(tab, cible, PUSH, 1);
+		execute_instruction(tab, cible, PUSH);
 }
-
 
 int		verif_pile(t_pushswap *tab, int size, char sens)
 {
@@ -96,10 +104,10 @@ int		verif_pile(t_pushswap *tab, int size, char sens)
 
 	cmp = -1;
 	if (sens == 'C')
-		tmp = tab->stack_A;
+		tmp = tab->stack_a;
 	else
-		tmp = tab->stack_B;
-	while (++cmp < size && tmp->next != tab->stack_A && sens != 2)
+		tmp = tab->stack_b;
+	while (++cmp < size && tmp->next != tab->stack_a && sens != 2)
 	{
 		if ((tmp->dta > tmp->next->dta && sens == 'C') ||
 				(tmp->dta < tmp->next->dta && sens == 'D'))
