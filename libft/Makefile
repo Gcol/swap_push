@@ -104,6 +104,7 @@ SRC_FT =	ft_memset					\
 					ft_atoi_base			\
 					ft_free_factory		\
 					ft_strjoin_free		\
+					ft_dlist_make_circular \
 
 
 ## List of Utilities

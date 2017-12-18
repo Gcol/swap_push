@@ -8,21 +8,22 @@ COLOR = \0033[1;35m
 
 ## List of Directories
 
-INC_DIR = includes
-OBJ_DIR = objs
-SRC_DIR = srcs
+INC_DIR = include
+OBJ_DIR = obj
+SRC_DIR = src
 LIB_DIR = ../libft
 
 ## Compilating Utilities
 
-FLAGS = -Wall -Wextra -Werror -Ofast
+FLAGS = -Wall -Wextra -Werror
 INC = $(INC_DIR:%=-I ./%)
 LIB = -L $(LIB_DIR) -lft
 CC = clang $(FLAGS) $(INC)
 
 ## List of Functions
 
-SRC_FT =	 checker 
+SRC_FT =	checker			\
+					instruction	\
 
 ## List of Utilities
 

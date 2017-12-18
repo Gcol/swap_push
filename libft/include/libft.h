@@ -134,5 +134,6 @@ void			ft_dlist_add(t_dlist **target, int index, int value);
 void			ft_dlist_remove(t_dlist **target, int index);
 size_t			ft_dlist_len(t_dlist *lst);
 char			*ft_strjoin_free(char *s1, char *s2);
+void ft_dlist_make_circular(t_dlist *tab);
 
 #endif

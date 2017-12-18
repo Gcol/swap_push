@@ -8,9 +8,9 @@ COLOR = \0033[1;35m
 
 ## List of Directories
 
-INC_DIR = includes
-OBJ_DIR = objs
-SRC_DIR = srcs
+INC_DIR = include
+OBJ_DIR = obj
+SRC_DIR = src
 LIB_DIR = ../libft
 
 ## Compilating Utilities
@@ -23,6 +23,8 @@ CC = clang $(FLAGS) $(INC)
 ## List of Functions
 
 SRC_FT =	push_swap		\
+					tri					\
+					instruction	\
 
 ## List of Utilities
 
