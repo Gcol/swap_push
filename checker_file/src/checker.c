@@ -40,13 +40,13 @@ int		main(int argc, char **argv)
 {
 	t_pushswap *tab;
 
-	tab = ft_memalloc_exit(sizeof(t_pushswap));
 	if (argc > 1)
 	{
+		tab = ft_memalloc_exit(sizeof(t_pushswap));
 		get_argc_to_tab(tab, argv, 0, argc);
 		ft_dlist_make_circular(tab->stack_a);
 		launch_instruction(tab, 0, 0);
 		verif_pile(tab);
-	}
+	}x
 	return (0);
 }

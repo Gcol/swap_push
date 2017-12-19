@@ -41,11 +41,11 @@ int		main(int argc, char **argv)
 {
 	t_pushswap	*tab;
 
-	tab = ft_memalloc_exit(sizeof(t_pushswap));
-	tab->registre = ft_memalloc_exit(sizeof(t_buffer));
-	tab->origine = tab->registre;
 	if (argc > 1)
 	{
+		tab = ft_memalloc_exit(sizeof(t_pushswap));
+		tab->registre = ft_memalloc_exit(sizeof(t_buffer));
+		tab->origine = tab->registre;
 		get_argc_to_tab(tab, argv, -1, argc);
 		ft_dlist_make_circular(tab->stack_a);
 		get_instruc(tab, ft_dlist_len(tab->stack_a), 0, 1);

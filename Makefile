@@ -49,4 +49,6 @@ fclean: clean
 	@make -C $(PUSH_SWAP_DIR) fclean
 	@rm -rf $(CHECKER) $(PUSH_SWAP)
 
-re: fclean all 
+re: fclean all
+
+norme : norminette | grep "Error" -B2
