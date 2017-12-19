@@ -12,52 +12,41 @@
 
 CHECKER = checker
 PUSH_SWAP = push_swap
+
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror `sdl2-config --cflags`
-LFLAGS = `sdl2-config --libs`
-SRC_DIR = src/
+
+CFLAGS = -Wall -Wextra -Werror
+
 LIBFT_DIR = libft/
-OBJ_DIR = obj/
 
-CHECKER_SRC =	checker.c 		\
-							instrucion.c	\
+CHECKER_DIR = checker_file/
 
-PUSH_SWAPS_SRC =	push_swap.c		\
-									instruction.c	\
-									tri.c					\
+PUSH_SWAP_DIR = push_swap_file/
 
-CHECKER_OBJ = ${CHECKER_SRC:c=o}
-PUSH_SWAPS_OBJ = ${PS_SRC:c=o}
 
 all: $(CHECKER) $(PUSH_SWAP)
 
-$(addprefix $(OBJ_DIR), %.o): $(SRC_DIR)%.c
-	@mkdir -p $(OBJ_DIR)
-	@$(CC) $(CFLAGS) -I libft/ -I include/ -c -o $@ $^
 
-$(CHECKER): $(addprefix $(OBJ_DIR), $(CHECKER_OBJ))
-	@make -C libft/
-	@echo "Making checker..."
-	@$(CC) $(addprefix $(OBJ_DIR), $(CHECKER_OBJ)) $(LIBFT_DIR)libft.a         \
-								$(LFLAGS) -I libft/ -I include/ -o $(CHECKER)
-	@echo "Done !"
+$(CHECKER):
+	@make -C $(CHECKER_DIR) $(CHECKER)
+	@mv $(CHECKER_DIR)/$(CHECKER) ./
+	@echo "Done ! Checker"
 
-$(PUSH_SWAP): $(addprefix $(OBJ_DIR), $(PS_OBJ))
-	@make -C libft/
-	@echo "Making push_swap..."
-	@$(CC) $(addprefix $(OBJ_DIR), $(PS_OBJ)) $(LIBFT_DIR)libft.a    \
-		-I libft/ -I include/ -o $(PUSH_SWAP)
-	@echo "Done !"
+$(PUSH_SWAP):
+	@make -C $(PUSH_SWAP_DIR) $(PUSH_SWAP)
+	@mv $(PUSH_SWAP_DIR)/$(PUSH_SWAP) ./
+	@echo "Done ! Push_swap"
 
 clean:
 	@make -C $(LIBFT_DIR) clean
+	@make -C $(CHECKER_DIR) clean
+	@make -C $(PUSH_SWAP_DIR) clean
 	@rm -rf $(OBJ_DIR)
-	@echo "Object files removed."
 
 fclean: clean
 	@make -C $(LIBFT_DIR) fclean
-	@rm -f $(CHECKER)	@echo "$(CHECKER) removed"
-	@rm -f $(PUSH_SWAP)
-	@echo "$(PUSH_SWAP) removed"
+	@make -C $(CHECKER_DIR) fclean
+	@make -C $(PUSH_SWAP_DIR) fclean
+	@rm -rf $(CHECKER) $(PUSH_SWAP)
 
-re: fclean all
+re: fclean all 
