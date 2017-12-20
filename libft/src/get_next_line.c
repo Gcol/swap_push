@@ -78,8 +78,8 @@ static int		ft_attrib(char **line, t_memory *save, int cmp, int p)
 		save->buf[save->pm] = (p == 0) ? '\0' : save->buf[save->pm];
 	}
 	cmp = &(*ft_strchr(save->buf, '\n')) - &(*save->buf) + 1;
-	while (cmp > 0 && p++ < save->pm - cmp)
-		save->buf[p] = save->buf[cmp + p];
+	while (cmp > 0 && p++ < save->pm)
+		save->buf[p] = (p < save->pm - cmp) ? save->buf[cmp + p] : 0;
 	return (1);
 }
 

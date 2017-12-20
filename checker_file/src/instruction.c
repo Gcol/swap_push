@@ -29,14 +29,14 @@ t_dlist	*add_st(char *str, t_dlist *stack, t_dlist *res)
 	else
 	{
 		res = stack;
-		while (res->prev && res->dta != test)
+		while (res && res->dta != test)
 			res = res->prev;
-		if (res->dta == test)
+		if (res && res->dta == test)
 			ft_exit(2);
-		res->prev = ft_memalloc_exit(sizeof(t_dlist));
-		res->prev->dta = test;
-		res->prev->next = res;
-		res = res->prev;
+		stack->prev = ft_memalloc_exit(sizeof(t_dlist));
+		stack->prev->dta = test;
+		stack->prev->next = stack;
+		res = stack->prev;
 	}
 	return (res);
 }
@@ -105,7 +105,7 @@ void	launch_instruction(t_pushswap *tab, int len, int choice)
 	{
 		choice = 4;
 		len = ft_strlen(str);
-		if (str[0] == str[1] && str[len] == str[len - 1]
+		if (str[0] == str[1] && str[len - 1] == str[len - 2]
 				&& ft_c_in_str(str[0], "rs"))
 			choice = 3;
 		if (str[len - 1] == 'a' || str[len - 1] == 'b')

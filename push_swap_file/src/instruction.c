@@ -29,14 +29,14 @@ t_dlist	*add_st(char *str, t_dlist *stack, t_dlist *res)
 	else
 	{
 		res = stack;
-		while (res->prev && res->dta != test)
+		while (res && res->dta != test)
 			res = res->prev;
-		if (res->dta == test)
+		if (res && res->dta == test)
 			ft_exit(2);
-		res->prev = ft_memalloc_exit(sizeof(t_dlist));
-		res->prev->dta = test;
-		res->prev->next = res;
-		res = res->prev;
+		stack->prev = ft_memalloc_exit(sizeof(t_dlist));
+		stack->prev->dta = test;
+		stack->prev->next = stack;
+		res = stack->prev;
 	}
 	return (res);
 }

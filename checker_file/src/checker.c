@@ -47,6 +47,6 @@ int		main(int argc, char **argv)
 		ft_dlist_make_circular(tab->stack_a);
 		launch_instruction(tab, 0, 0);
 		verif_pile(tab);
-	}x
+	}
 	return (0);
 }
