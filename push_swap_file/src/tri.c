@@ -46,11 +46,11 @@ int		push_to_stack_median(t_pushswap *tab, int cible, int pivot)
 	if ((!cible && (tab->stack_a->dta < pivot))
 			|| (cible && (tab->stack_b->dta >= pivot)))
 	{
-		execute_instruction(tab, !cible, PUSH);
+		execute_instruction(tab, !cible, PUSH + !cible * 10);
 		return (1);
 	}
 	else
-		execute_instruction(tab, cible, ROTATE);
+		execute_instruction(tab, cible, ROTATE + cible * 10);
 	return (0);
 }
 
@@ -59,12 +59,12 @@ void	tri_stack_3(t_pushswap *tab, int size, int cible)
 	if (!verif_pile(tab, size - 1, (cible) ? 'D' : 'C'))
 	{
 		if (!verif_pile(tab, 1, (cible) ? 'D' : 'C'))
-			execute_instruction(tab, cible, SWITCH);
+			execute_instruction(tab, cible, SWITCH + cible * 10);
 		else
 		{
-			execute_instruction(tab, cible, ROTATE);
-			execute_instruction(tab, cible, SWITCH);
-			execute_instruction(tab, cible, D_ROTATE);
+			execute_instruction(tab, cible, ROTATE + cible * 10);
+			execute_instruction(tab, cible, SWITCH + cible * 10);
+			execute_instruction(tab, cible, D_ROTATE + cible * 10);
 		}
 		tri_stack_3(tab, size, cible);
 	}
@@ -84,7 +84,7 @@ void	get_instruc(t_pushswap *tab, int size, int cible, int fiter)
 	while (size > 3 && nb_supm < (size / 2) + (size % 2 && cible) && ++nb_rot)
 		nb_supm += push_to_stack_median(tab, cible, pivot);
 	while ((cible || !fiter) && (nb_rot--) - nb_supm)
-		execute_instruction(tab, cible, D_ROTATE);
+		execute_instruction(tab, cible, D_ROTATE + cible * 10);
 	if (nb_supm && cible)
 		get_instruc(tab, nb_supm, !cible, 0);
 	if (size - nb_supm <= 3)
@@ -94,7 +94,7 @@ void	get_instruc(t_pushswap *tab, int size, int cible, int fiter)
 	if (nb_supm && !cible)
 		get_instruc(tab, nb_supm, !cible, (fiter == 2) ? 1 : 0);
 	while (nb_supm--)
-		execute_instruction(tab, cible, PUSH);
+		execute_instruction(tab, cible, PUSH + cible * 10);
 }
 
 int		verif_pile(t_pushswap *tab, int size, char sens)

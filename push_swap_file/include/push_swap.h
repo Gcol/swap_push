@@ -17,7 +17,7 @@
 # include <stdlib.h>
 # include <limits.h>
 
-enum {D_ROTATE, PUSH, ROTATE, SWITCH};
+enum {EMPTY, D_ROTATE, ROTATE, PUSH, SWITCH};
 
 typedef struct	s_buffer
 {
@@ -36,9 +36,9 @@ typedef struct	s_pushswap
 
 int				verif_pile(t_pushswap *tab, int size, char sens);
 char			*choice_register(int choice, int inst);
-void			fill_buffer(t_pushswap *tab, char *test);
+void			fill_buffer(t_buffer **registre, char dta, char *data);
 void			tri_stack_3(t_pushswap *tab, int size, int cible);
-void			execute_instruction(t_pushswap *t, int choice, int inst);
+void			execute_instruction(t_pushswap *t, int choice, char inst);
 void			get_instruc(t_pushswap *tab, int size, int cible, int fiter);
 void			get_argc_to_tab(t_pushswap *tab, char **ag, long cnt, int argc);
 
