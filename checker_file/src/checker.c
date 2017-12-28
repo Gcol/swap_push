@@ -20,10 +20,9 @@ void	verif_pile(t_pushswap *tab)
 	sens = 2;
 	if (!tab->stack_b)
 	{
-		tmp = tab->stack_a->next;
-		if (tab->stack_a->dta < tmp->dta)
-			sens = 'C';
-		while (tmp->next != tab->stack_a && sens != 2)
+		sens = 'C';
+		tmp = tab->stack_a;
+		while (tmp != tab->stack_a->next && sens != 2)
 		{
 			if ((tmp->dta > tmp->next->dta && sens == 'C'))
 				sens = 2;

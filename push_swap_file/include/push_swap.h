@@ -41,5 +41,6 @@ void			tri_stack_3(t_pushswap *tab, int size, int cible);
 void			execute_instruction(t_pushswap *t, int choice, char inst);
 void			get_instruc(t_pushswap *tab, int size, int cible, int fiter);
 void			get_argc_to_tab(t_pushswap *tab, char **ag, long cnt, int argc);
+void	little_tri(t_pushswap *tab, int size)
 
 #endif

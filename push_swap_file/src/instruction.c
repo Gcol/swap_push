@@ -12,6 +12,29 @@
 
 #include <push_swap.h>
 
+int		verif_pile(t_pushswap *tab, int size, char sens)
+{
+	t_dlist	*tmp;
+	int		cmp;
+
+	cmp = -1;
+	if (sens == 'C')
+		tmp = tab->stack_a;
+	else
+		tmp = tab->stack_b;
+	while (++cmp < size && tmp->next != tab->stack_a && sens != 2)
+	{
+		if ((tmp->dta > tmp->next->dta && sens == 'C') ||
+				(tmp->dta < tmp->next->dta && sens == 'D'))
+			sens = 2;
+		tmp = tmp->next;
+	}
+	if (sens != 2)
+		return (1);
+	else
+		return (0);
+}
+
 t_dlist	*add_st(char *str, t_dlist *stack, t_dlist *res)
 {
 	long long	value;
@@ -127,6 +150,6 @@ char	*choice_register(int choice, int inst)
 		res[len] = 'b';
 	else
 		res[len] = res[len - 1];
-	
+
 	return (res);
 }

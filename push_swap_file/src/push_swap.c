@@ -12,6 +12,27 @@
 
 #include <push_swap.h>
 
+void	little_tri(t_pushswap *tab, size_t size, char sens, int cible)
+{
+		if (verif_pile((cible == 0) ? tab->stack_a : tab->stack_b), size, sens))
+			return ;
+		if (size == 2)
+			execute_instruction(tab, cible, SWITCH);
+		else
+		{
+			if (tab->stack_a->dta > tab->stack_a->next->dta
+			&& tab->stack_a->dta > tab->stack_a->next->next->dta)
+			execute_instruction(tab, 0, ROTATE);
+		if (tab->stack_a->dta > tab->stack_a->next->dta)
+			execute_instruction(tab, 0, SWITCH);
+		if (tab->stack_a->dta < tab->stack_a->next->dta
+			&& !verif_pile(tab, size, 'C'))
+			execute_instruction(tab, 0, D_ROTATE);
+		little_tri(tab, size);
+			}
+		}
+}
+
 void	fill_buffer(t_buffer **registre, char dta, char *data)
 {
 	int i;
@@ -41,7 +62,7 @@ void	clean_buffer(t_pushswap *tab)
 	t_buffer *res;
 	t_buffer *origine;
 
-	res = ft_memalloc_exit(sizeof(t_buffer)); //ft_memset new buff avec empty
+	res = ft_memalloc_exit(sizeof(t_buffer));
 	origine = res;
 	tab->registre = tab->origine;
 	while (tab->registre)
@@ -54,8 +75,8 @@ void	clean_buffer(t_pushswap *tab)
 			else
 				tmp_new = res->reg[res->index];
 			tmp_old = tab->registre->reg[new_index];
-			if(((tmp_new % 10 == ROTATE && tmp_old % 10 == D_ROTATE) 
-			|| (tmp_new % 10 == D_ROTATE && tmp_old % 10 == ROTATE) 
+			if(((tmp_new % 10 == ROTATE && tmp_old % 10 == D_ROTATE)
+			|| (tmp_new % 10 == D_ROTATE && tmp_old % 10 == ROTATE)
 			|| (tmp_new == PUSH && tmp_old == 10 + PUSH)
 			|| (tmp_new == 10 + PUSH && tmp_old == PUSH)) && res->index)
 				res->index--;
@@ -71,12 +92,11 @@ void	clean_buffer(t_pushswap *tab)
 		tab->origine = tab->registre;
 	}
 	tab->origine = origine;
-	//heu comment gerer mes leaks de deux t_push_swap ?
 }
 
 
 void	read_buffer(t_buffer *buff)
-{	
+{
 	t_buffer	*affichage;
 	t_buffer	*origine;
 	t_buffer	*tmp;

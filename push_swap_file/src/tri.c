@@ -12,6 +12,26 @@
 
 #include <push_swap.h>
 
+void	little_tri(t_pushswap *tab, int size, int cible)
+{
+	if (verif_pile(tab, size, 'C'))
+		return ;
+	if (size == 2)
+		execute_instruction(tab, 0, SWITCH);
+	else
+	{
+		if (tab->stack_a->dta > tab->stack_a->next->dta
+			&& tab->stack_a->dta > tab->stack_a->next->next->dta)
+			execute_instruction(tab, 0, ROTATE);
+		if (tab->stack_a->dta > tab->stack_a->next->dta)
+			execute_instruction(tab, 0, SWITCH);
+		if (tab->stack_a->dta < tab->stack_a->next->dta
+			&& !verif_pile(tab, size, 'C'))
+			execute_instruction(tab, 0, D_ROTATE);
+		little_tri(tab, size);
+	}
+}
+
 int		median(t_dlist *stack, int size, int position, int bigger)
 {
 	int		lower;
@@ -95,27 +115,4 @@ void	get_instruc(t_pushswap *tab, int size, int cible, int fiter)
 		get_instruc(tab, nb_supm, !cible, (fiter == 2) ? 1 : 0);
 	while (nb_supm--)
 		execute_instruction(tab, cible, PUSH + cible * 10);
-}
-
-int		verif_pile(t_pushswap *tab, int size, char sens)
-{
-	t_dlist	*tmp;
-	int		cmp;
-
-	cmp = -1;
-	if (sens == 'C')
-		tmp = tab->stack_a;
-	else
-		tmp = tab->stack_b;
-	while (++cmp < size && tmp->next != tab->stack_a && sens != 2)
-	{
-		if ((tmp->dta > tmp->next->dta && sens == 'C') ||
-				(tmp->dta < tmp->next->dta && sens == 'D'))
-			sens = 2;
-		tmp = tmp->next;
-	}
-	if (sens != 2)
-		return (1);
-	else
-		return (0);
 }
