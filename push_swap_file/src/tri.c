@@ -12,25 +12,6 @@
 
 #include <push_swap.h>
 
-void	little_tri(t_pushswap *tab, int size, int cible)
-{
-	if (verif_pile(tab, size, 'C'))
-		return ;
-	if (size == 2)
-		execute_instruction(tab, 0, SWITCH);
-	else
-	{
-		if (tab->stack_a->dta > tab->stack_a->next->dta
-			&& tab->stack_a->dta > tab->stack_a->next->next->dta)
-			execute_instruction(tab, 0, ROTATE);
-		if (tab->stack_a->dta > tab->stack_a->next->dta)
-			execute_instruction(tab, 0, SWITCH);
-		if (tab->stack_a->dta < tab->stack_a->next->dta
-			&& !verif_pile(tab, size, 'C'))
-			execute_instruction(tab, 0, D_ROTATE);
-		little_tri(tab, size);
-	}
-}
 
 int		median(t_dlist *stack, int size, int position, int bigger)
 {
@@ -98,9 +79,9 @@ void	get_instruc(t_pushswap *tab, int size, int cible, int fiter)
 
 	nb_rot = 0;
 	nb_supm = 0;
-	pivot = median((!cible) ? tab->stack_a : tab->stack_b, size, -1, INT_MAX);
 	if (verif_pile(tab, size, (cible) ? 'D' : 'C') || size == 1)
 		return ;
+	pivot = median((!cible) ? tab->stack_a : tab->stack_b, size, -1, INT_MAX);
 	while (size > 3 && nb_supm < (size / 2) + (size % 2 && cible) && ++nb_rot)
 		nb_supm += push_to_stack_median(tab, cible, pivot);
 	while ((cible || !fiter) && (nb_rot--) - nb_supm)

@@ -12,27 +12,6 @@
 
 #include <push_swap.h>
 
-void	little_tri(t_pushswap *tab, size_t size, char sens, int cible)
-{
-		if (verif_pile((cible == 0) ? tab->stack_a : tab->stack_b), size, sens))
-			return ;
-		if (size == 2)
-			execute_instruction(tab, cible, SWITCH);
-		else
-		{
-			if (tab->stack_a->dta > tab->stack_a->next->dta
-			&& tab->stack_a->dta > tab->stack_a->next->next->dta)
-			execute_instruction(tab, 0, ROTATE);
-		if (tab->stack_a->dta > tab->stack_a->next->dta)
-			execute_instruction(tab, 0, SWITCH);
-		if (tab->stack_a->dta < tab->stack_a->next->dta
-			&& !verif_pile(tab, size, 'C'))
-			execute_instruction(tab, 0, D_ROTATE);
-		little_tri(tab, size);
-			}
-		}
-}
-
 void	fill_buffer(t_buffer **registre, char dta, char *data)
 {
 	int i;
@@ -127,6 +106,8 @@ void	read_buffer(t_buffer *buff)
 int		main(int argc, char **argv)
 {
 	t_pushswap	*tab;
+	size_t size;
+	int test;
 
 	if (argc > 1)
 	{
@@ -135,7 +116,14 @@ int		main(int argc, char **argv)
 		tab->origine = tab->registre;
 		get_argc_to_tab(tab, argv, -1, argc);
 		ft_dlist_make_circular(tab->stack_a);
-		get_instruc(tab, ft_dlist_len(tab->stack_a), 0, 1);
+		size = ft_dlist_len(tab->stack_a);
+		test = size - 3 + 1;
+		if (size <= 3)
+			little_tri(tab, (size > 3) ? 3: size);
+		else if (size <= 5)
+				tri5(tab, size);
+		else
+			get_instruc(tab, ft_dlist_len(tab->stack_a), 0, 1);
 		clean_buffer(tab);
 		read_buffer(tab->origine);
 	}

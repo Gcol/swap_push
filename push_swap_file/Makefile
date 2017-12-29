@@ -25,6 +25,7 @@ CC = clang $(FLAGS) $(INC)
 SRC_FT =	push_swap		\
 					tri					\
 					instruction	\
+					little_tri	\
 
 ## List of Utilities
 
