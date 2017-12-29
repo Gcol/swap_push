@@ -92,9 +92,7 @@ void	get_argc_to_tab(t_pushswap *tab, char **arg, long cnt_c, int index_s)
 	}
 }
 
-#include <stdio.h>
-
-void	execute_instruction(t_pushswap *t, int choice, char inst)
+void	execute_instruction(t_pushswap *t, int choice, char inst, int tmp)
 {
 	t_dlist	**id;
 	int		tmp;
@@ -105,14 +103,12 @@ void	execute_instruction(t_pushswap *t, int choice, char inst)
 		execute_instruction(t, 1, inst);
 	id = (choice == 0) ? &t->stack_a : &t->stack_b;
 	if (inst == PUSH)
-	{
 		if ((choice == 0) ? t->stack_b : t->stack_a)
 		{
 			ft_dlist_add(id, 0, ((choice == 0) ? t->stack_b : t->stack_a)->dta);
 			ft_dlist_remove(((choice == 0) ? &t->stack_b : &t->stack_a), 0);
 		}
-	}
-	else if (inst == D_ROTATE && *id && (*id)->prev)
+	if (inst == D_ROTATE && *id && (*id)->prev)
 		*id = (*id)->prev;
 	else if (inst == ROTATE && *id && (*id)->next)
 		*id = (*id)->next;
@@ -150,6 +146,5 @@ char	*choice_register(int choice, int inst)
 		res[len] = 'b';
 	else
 		res[len] = res[len - 1];
-
 	return (res);
 }

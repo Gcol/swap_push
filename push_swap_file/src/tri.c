@@ -12,7 +12,6 @@
 
 #include <push_swap.h>
 
-
 int		median(t_dlist *stack, int size, int position, int bigger)
 {
 	int		lower;

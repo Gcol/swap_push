@@ -2,13 +2,16 @@ iteration=0
 fin=1000
 instrucion=0
 median=0
+inst=0
 
 while test $iteration != $fin
     do
-    ARG=`ruby -e "puts (-49..50).to_a.shuffle.join(' ')"`
-    ./push_swap $ARG > test.txt
+	ARG=`ruby -e "puts (-49..50).to_a.shuffle.join(' ')"`	
+	./push_swap $ARG > test.txt
     instrucion=$(bc <<< "$instrucion + $(wc -l test.txt | awk '{print $1}')")
-    iteration=$(($iteration + 1))
+    inst=$(wc -l test.txt | awk '{print $1}')
+	echo $iteration + " nb_instruc = " + $inst
+	iteration=$(($iteration + 1))
 done
     median=$(bc <<< "$instrucion/1000")
     echo "Nb instruction moyenne = "$median
